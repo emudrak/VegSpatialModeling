@@ -659,7 +659,7 @@ vert.k.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireDira.FireRaina
 #----------
 # Worst is  a.TranDirS:FireUB (3)  h.FireUB:RainD (4)
 # Next, remove  h.FireUB:RainD  --> Step   H
-# Then, remove  a.TranDirS:FireUB  --> Step  ?????????
+# Then, remove  a.TranDirS:FireUB  --> Step  AW
 
 
 #Step H     From Step G, remove h.FireUB:RainD  ------
@@ -708,7 +708,6 @@ vert.k.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRaina.nlme=upd
 # Worst is  a.Area_Bot:RainD (7)   
 # Next, remove a.Area_Bot:RainD   --> Step   J 
 
-
 #Step J     From Step I, remove a.Area_Bot:RainD  ----
 i=-.5; i.sl=2; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
 vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.FireRaina.nlme=
@@ -731,7 +730,6 @@ vert.k.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.FireRaina.nlme=update(vert
 #----------
 # Worst is  k.Fire, but save for interxn.  Next worst is h.Rain   (7)   
 # Next, remove  h.Rain --> Step    K 
-
 
 #Step K     From Step J, remove h.Rain   -------
 i=-.5; i.sl=2; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
@@ -780,8 +778,6 @@ vert.k.Szahk.Dirahk.Fireahk.Rainak.SzDirah.SzFirehk.FireRaina.nlme=update(vert.a
 # Worst is   h.(Intercept), then h.TranDirS (but interxn) then  a.FireUB:RainD  (7)   
 # Next, remove  a.FireUB:RainD  --> Step    M
 
-
-
 #Step M     From Step L, remove a.FireUB:RainD  -------------
 i=-.5; i.sl=2; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
 vert.ahk.Szahk.Dirahk.Fireahk.Rainak.SzDirah.SzFirehk.nlme=
@@ -829,7 +825,6 @@ vert.k.Szahk.Dirahk.Fireahk.Raink.SzDirah.SzFirehk.nlme=update(vert.ahk.Szahk.Di
 # Worst is    h.FireUB  (but interxn) then  a.FireUB   (6)  
 # Worst is a.FireUB (1)
 # Next, remove  a.FireUB     --> Step   O
-
 
 #Step O     From Step N, remove a.FireUB  -------
 i=-.5; i.sl=2; j=1.25; j.sl=2; m=-1.5; m.sl=-2
@@ -905,7 +900,6 @@ vert.k.Szahk.Dirahk.Firehk.Raink.SzDira.SzFirek.nlme=update(vert.ahk.Szahk.Dirah
 # Worst is   h.FireUB   (7)  
 # Next, remove  h.FireUB    --> Step  R
 
-
 #Step R     From Step Q, remove h.FireUB  ----
 i=-.5; i.sl=-2; j=1; j.sl=0; m=-2; m.sl=-2
 vert.ahk.Szahk.Dirahk.Firek.Raink.SzDira.SzFirek.nlme=
@@ -933,7 +927,6 @@ vert.k.Szahk.Dirahk.Firek.Raink.SzDira.SzFirek.nlme=update(vert.ahk.Szahk.Dirahk
 # Next, remove a.Area_Bot:TranDirS  --> Step  S
 # Then, remove k.TranDirS --> Step Z
 
-
 #Step S     From Step R, remove a.Area_Bot:TranDirS  ---------
 i=-.5; i.sl=-2; j=1; j.sl=0; m=-2; m.sl=-2
 vert.ahk.Szahk.Dirahk.Firek.Raink.SzFirek.nlme=
@@ -959,7 +952,6 @@ vert.k.Szahk.Dirahk.Firek.Raink.SzFirek.nlme=update(vert.ahk.Szahk.Dirahk.Firek.
 # Worst is  h.intercept, then k.TranDirS  (6)  
 # Next, remove k.TranDirS  --> Step T
 
-
 #Step T     From Step S, remove k.TranDirS  ------
 i=-.5; i.sl=2; j=1.25; j.sl=2; m=-2; m.sl=2
 vert.ahk.Szahk.Dirah.Firek.Raink.SzFirek.nlme=
@@ -983,7 +975,6 @@ vert.k.Szahk.Dirah.Firek.Raink.SzFirek.nlme=update(vert.ahk.Szahk.Dirah.Firek.Ra
 # Worst is  a.intercept, then k.FireUB (but interxn), then h.TranDirS  (7)  
 # Next, remove h.TranDirS  --> Step U
 
-
 #Step U     From Step T, remove h.TranDirS   ----------
 i=-.5; i.sl=2; j=1.25; j.sl=2; m=-2; m.sl=2
 vert.ahk.Szahk.Dira.Firek.Raink.SzFirek.nlme=
@@ -1006,7 +997,6 @@ vert.k.Szahk.Dira.Firek.Raink.SzFirek.nlme=update(vert.ahk.Szahk.Dira.Firek.Rain
 #----------
 # Worst is   k.FireUB (but interxn), then h.Area_Bot  (7)  
 # Next, remove h.Area_Bot  --> Step V
-
 
 #Step V     From Step U, remove h.Area_Bot  ------  
 i=-.25; i.sl=2; j=1; j.sl=0; m=-2; m.sl=-2
@@ -1039,7 +1029,6 @@ vert.k.Szak.Dira.Firek.Raink.SzFirek.nlme=update(vert.ahk.Szak.Dira.Firek.Raink.
 # Next, remove a.Area_Bot  --> Step W
 # Next, remove a.TransDir  --> Step  X
 
-
 #Step W     From Step V, remove a.Area_Bot  ------
 i=-.25; i.sl=2; j=1; j.sl=0; m=-2; m.sl=2
 vert.ahk.Szk.Dira.Firek.Raink.SzFirek.nlme=
@@ -1063,9 +1052,7 @@ vert.k.Szk.Dira.Firek.Raink.SzFirek.nlme=update(vert.ahk.Szk.Dira.Firek.Raink.Sz
 #----------
 # Worst is   a.Intercept (but a.TransDir),k.FireUB (but interxn), then none  (3)  
 #   k.FireUB (but interxn), then none  (4)  
-# STOP
-#CANDIDATE MODELS
-
+# STOP                          #CANDIDATE MODELS
 
 #Step X     From Step V, remove a.TransDir  -------
 i=-.25; i.sl=2; j=1; j.sl=0; m=-2; m.sl=-2
@@ -1117,9 +1104,7 @@ vert.h.Szak.Nointa.Firek.Raink.SzFirek.nlme=update(vert.ahk.Szak.Nointa.Firek.Ra
 vert.k.Szak.Nointa.Firek.Raink.SzFirek.nlme=update(vert.ahk.Szak.Nointa.Firek.Raink.SzFirek.nlme, random=k~1|Shrub)   #CANDIDATE MODEL 
 #----------
 # Worst is k.FireUB, but interxn.  Then none (7)    
-# STOP!
-# CANDIDATE MODELS
-
+# STOP!                      # CANDIDATE MODELS
 
 #Step Z     From Step R, remove k.TranDirS    ---------------
 i=-.5; i.sl=-2; j=1; j.sl=0; m=-2; m.sl=2
@@ -1141,9 +1126,8 @@ vert.a.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme=update(vert.ahk.Szahk.Dirah.F
 vert.h.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme=update(vert.ahk.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme, random=h~1|Shrub)     #CANDIDATE MODEL
 vert.k.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme=update(vert.ahk.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme, random=k~1|Shrub)      #CANDIDATE MODEL 
 #----------
-# Worst is  None (7)
+# Worst is  None (7)                #CANDIDATE MODELS
 # STOP! 
-#CANDIDATE MODELS
 
 
 #Step AA     From Step O, remove h.Area_Bot:TranDirS  -------
@@ -1169,7 +1153,6 @@ vert.k.Szahk.Dirahk.Firehk.Raink.SzDira.SzFirehk.nlme=update(vert.ahk.Szahk.Dira
 # Worst is  k.Area_Bot:FireUB (7)  
 # Next, remove  k.Area_Bot:FireUB  --> Step  AB  
 
-
 #Step AB     From Step AA, remove k.Area_Bot:FireUB  -------
 i=-.25; i.sl=0; j=1; j.sl=-2; m=-2; m.sl=2
 vert.ahk.Szahk.Dirahk.Firehk.Raink.SzDira.SzFireh.nlme=
@@ -1192,7 +1175,6 @@ vert.k.Szahk.Dirahk.Firehk.Raink.SzDira.SzFireh.nlme=update(vert.ahk.Szahk.Dirah
 #----------
 # Worst is   a.int/a.Area_Bot, then   a.TranDirS then a.Area_Bot:TranDirS (7)
 # Next, remove   a.Area_Bot:TranDirS  --> Step    AC
-
 
 #Step AC     From Step AB, remove a.Area_Bot:TranDirS  -------
 i=-.25; i.sl=0; j=1; j.sl=-2; m=-2; m.sl=2
@@ -1217,7 +1199,6 @@ vert.k.Szahk.Dirahk.Firehk.Raink.SzFireh.nlme=update(vert.ahk.Szahk.Dirahk.Fireh
 # Worst is   k.FireUB,    (7)
 # Next, remove  k.FireUB   --> Step   AD  
 
-
 #Step AD     From Step AC, remove k.FireUB  -------
 i=-.25; i.sl=2; j=1; j.sl=-2; m=-2.5; m.sl=2
 vert.ahk.Szahk.Dirahk.Fireh.Raink.SzFireh.nlme=
@@ -1240,7 +1221,6 @@ vert.k.Szahk.Dirahk.Fireh.Raink.SzFireh.nlme=update(vert.ahk.Szahk.Dirahk.Fireh.
 #----------
 # Worst is a.Int, then a.TranDirS (7)    
 # Next, remove  a.TranDirS  --> Step  AE  
-
 
 #Step AE     From Step AD, remove a.TranDirS  -------
 i=-.25; i.sl=2; j=1; j.sl=-2; m=-2.5; m.sl=2
@@ -1265,7 +1245,6 @@ vert.k.Szahk.Dirhk.Fireh.Raink.SzFireh.nlme=update(vert.ahk.Szahk.Dirhk.Fireh.Ra
 # Worst is k.(Intercept), but others signif  then a.Area_Bot (7)    
 # Next, remove a.Area_Bot    --> Step    AF
 
-
 #Step AF     From Step AE, remove a.Area_Bot  -------
 i=-.5; i.sl=2; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
 vert.ahk.Szhk.Dirhk.Fireh.Raink.SzFireh.nlme=
@@ -1289,9 +1268,7 @@ vert.k.Szhk.Dirhk.Fireh.Raink.SzFireh.nlme=update(vert.ahk.Szhk.Dirhk.Fireh.Rain
 # Worst is k.Area_Bot (7)    
 # Next, emove k.Area_Bot  --> Step    AG 
 
-
-
-#Step AG     From Step FF, remove k.Area_Bot  -------
+#Step AG     From Step AF, remove k.Area_Bot  -------
 i=-.5; i.sl=2; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
 vert.ahk.Szh.Dirhk.Fireh.Raink.SzFireh.nlme=
     nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
@@ -1314,9 +1291,7 @@ vert.k.Szh.Dirhk.Fireh.Raink.SzFireh.nlme=update(vert.ahk.Szh.Dirhk.Fireh.Raink.
 # Worst is a (nonsense), then   h.FireUB, but interxn, then h.TranDirS (6)
 # Worst is   h.FireUB, but interxn, h.Area_Bot:FireUB (1)
 # Next, remove h.TranDirS --> Step    AH 
-# Next, remove h.Area_Bot:FireUB --> Step    ?????????
-
-
+# Next, remove h.Area_Bot:FireUB --> Step    AO
 
 #Step AH     From Step AG, remove h.TranDirS  -------
 i=-.25; i.sl=2; j=1.25; j.sl=-2; m=-2.5; m.sl=-2
@@ -1345,8 +1320,6 @@ vert.k.Szh.Dirk.Fireh.Raink.SzFireh.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.Sz
 # worse is h.Area_Bot:FireUB (3)
 # Next,  h.Area_Bot:FireUB   --> Step  AI  
 
-
-
 #Step AI     From Step AH, remove h.Area_Bot:FireUB  -------
 i=-.25; i.sl=2; j=1.00; j.sl=0; m=-1.5; m.sl=-2
 vert.ahk.Szh.Dirk.Fireh.Raink.nlme=
@@ -1360,18 +1333,470 @@ vert.ahk.Szh.Dirk.Fireh.Raink.nlme=
 summary(vert.ahk.Szh.Dirk.Fireh.Raink.nlme)
 qqnorm(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, abline=c(0,1))
 plot(vert.ahk.Szh.Dirk.Fireh.Raink.nlme)
-i=-.50; i.sl=2; j=1.00; j.sl=2; m=-2; m.sl=-2
+i=-.5; i.sl=2; j=1.00; j.sl=2; m=-2; m.sl=-2
 vert.ah.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=a+h~1|Shrub, start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)))
 vert.ak.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=a+k~1|Shrub)
 i=-.25; i.sl=2; j=1.50; j.sl=-2; m=-2.5; m.sl=-2
 vert.hk.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=h+k~1|Shrub, start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)))  
-i=-.25; i.sl=2; j=1.00; j.sl=0; m=-2.0; m.sl=-2
+i=-.25; i.sl=2; j=1.0; j.sl=0; m=-2; m.sl=-2
 vert.a.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=a~1|Shrub, start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)))
-vert.h.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=h~1|Shrub)
-vert.k.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=k~1|Shrub)  
+i=-.5; i.sl=2; j=1.25; j.sl=2; m=-2.5; m.sl=-2
+vert.h.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=h~1|Shrub, start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)))
+i=-.5; i.sl=1; j=1; j.sl=0; m=-2; m.sl=-2
+vert.k.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, random=k~1|Shrub, start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)))  
 #----------
-# Worst is  h.FireUB , but must remove h.Area_Bot:FireUB first (also NS) (2)
-# Worst is   h.Int, but would need to must remove h.Area_Bot:FireUB first (also NS) (1)
-# worse is h.Area_Bot:FireUB (3)
-# Next,  h.Area_Bot:FireUB   --> Step  AI  
+# Worst is   h.FireUB (6)
+# Worst is   h.Area_Bot (1)
+# Next, remove  h.FireUB     --> Step  AJ 
+# Next, remove h.Area_Bot --> Step    AN
+
+#Step AJ     From Step AI, remove h.FireUB  -------
+i=-.25; i.sl=1; j=1.50; j.sl=0; m=-2; m.sl=-2
+vert.ahk.Szh.Dirk.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot,
+                    k ~TranDir + Rain ),
+         random=a+h+k~1|as.factor(Shrub),   
+         start=c(a=c(i),  h=c(j), c(j.sl),  k=c(m,m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szh.Dirk.Raink.nlme)
+qqnorm(vert.ahk.Szh.Dirk.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Szh.Dirk.Raink.nlme)
+vert.ah.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a+h~1|Shrub)
+vert.ak.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a+k~1|Shrub)
+vert.hk.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=h+k~1|Shrub)  
+vert.a.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a~1|Shrub)
+vert.h.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=h~1|Shrub)
+vert.k.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is   k.TranDirS (5)
+# Worst is    h.Area_Bot (2 )
+# Next, remove   k.TranDirS     --> Step   AK   
+# Next, remove  h.Area_Bot --> Step    AL
+
+#Step AK     From Step AJ, remove  k.TranDirS  -------
+i=-.25; i.sl=1; j=1.50; j.sl=0; m=-2; m.sl=-2
+vert.ahk.Szh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot,
+                    k ~ Rain ),
+         random=a+h+k~1|as.factor(Shrub),   
+         start=c(a=c(i),  h=c(j), c(j.sl),  k=m, m.sl), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szh.Raink.nlme)
+qqnorm(vert.ahk.Szh.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Szh.Raink.nlme)
+vert.ah.Szh.Raink.nlme=update(vert.ahk.Szh.Raink.nlme, random=a+h~1|Shrub)  #CANDIDATE
+vert.ak.Szh.Raink.nlme=update(vert.ahk.Szh.Raink.nlme, random=a+k~1|Shrub)
+vert.hk.Szh.Raink.nlme=update(vert.ahk.Szh.Raink.nlme, random=h+k~1|Shrub)  
+vert.a.Szh.Raink.nlme=update(vert.ahk.Szh.Raink.nlme, random=a~1|Shrub)  #CANDIDATE
+vert.h.Szh.Raink.nlme=update(vert.ahk.Szh.Raink.nlme, random=h~1|Shrub)  #CANDIDATE
+vert.k.Szh.Raink.nlme=update(vert.ahk.Szh.Raink.nlme, random=k~1|Shrub)   #CANDIDATE 
+#----------
+# Worst is  none  ( 7 )   Stop!                     #CANDIDATE 
+
+#Step AL     From Step AK, remove h.Area_Bot  -------
+i=-.25; i.sl=-0.25; j=1.25; j.sl=0; m=-2.5; m.sl=0
+vert.ah.Dirk.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~1,
+                    k ~TranDir + Rain ),
+         random=a+h~1|as.factor(Shrub),   #ahk Wont Converge
+         start=c(a=i,  h=j,   k=c(m,m), m.sl), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ah.Dirk.Raink.nlme)
+qqnorm(vert.ah.Dirk.Raink.nlme, abline=c(0,1))
+plot(vert.ah.Dirk.Raink.nlme)
+#vert.ah.Dirk.Raink.nlme=update(vert.ahk.Dirk.Raink.nlme, random=a+h~1|Shrub)
+vert.ak.Dirk.Raink.nlme=update(vert.ah.Dirk.Raink.nlme, random=a+k~1|Shrub) #Won't converge
+i=-.25; i.sl=-0.25; j=1.00; j.sl=0; m=-2; m.sl=0
+vert.hk.Dirk.Raink.nlme=update(vert.ah.Dirk.Raink.nlme, random=h+k~1|Shrub, start=c(a=i,  h=j,   k=c(m,m), m.sl))  
+vert.a.Dirk.Raink.nlme=update(vert.ah.Dirk.Raink.nlme, random=a~1|Shrub)
+vert.h.Dirk.Raink.nlme=update(vert.ah.Dirk.Raink.nlme, random=h~1|Shrub)  #CANDIDATE
+vert.k.Dirk.Raink.nlme=update(vert.ah.Dirk.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is  none  ( 2 )
+# Worst is   k.TranDirS   ( 2 )
+# Next, remove   k.TranDirS     --> Step  AM        #CANDIDATE
+
+#Step AM     From Step AL, remove k.TranDirS  -------
+i=-.25; i.sl=-0.25; j=1.25; j.sl=0; m=-2.5; m.sl=-2
+vert.ahk.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~1,
+                    k ~ Rain ),
+         random=a+h+k~1|as.factor(Shrub),  
+         start=c(a=i,  h=j,   k=m, m.sl), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Raink.nlme)
+qqnorm(vert.ahk.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Raink.nlme)
+i=-.5; i.sl=-0.25; j=1.25; j.sl=0; m=-2.0; m.sl=-2
+vert.ah.Raink.nlme=update(vert.ahk.Raink.nlme, random=a+h~1|Shrub, start=c(a=i,  h=j,   k=m, m.sl))  #CANDIDATE
+vert.ak.Raink.nlme=update(vert.ahk.Raink.nlme, random=a+k~1|Shrub) 
+i=-.25; i.sl=-0.25; j=1.5; j.sl=0; m=-1.5; m.sl=-2
+vert.hk.Raink.nlme=update(vert.ahk.Raink.nlme, random=h+k~1|Shrub, start=c(a=i,  h=j,   k=m, m.sl))  
+vert.a.Raink.nlme=update(vert.ahk.Raink.nlme, random=a~1|Shrub)  #CANDIDATE
+vert.h.Raink.nlme=update(vert.ahk.Raink.nlme, random=h~1|Shrub)   #CANDIDATE
+i=-.25; i.sl=-0.25; j=1.0; j.sl=0; m=-2.5; m.sl=-2
+vert.k.Raink.nlme=update(vert.ahk.Raink.nlme, random=k~1|Shrub, start=c(a=i,  h=j,   k=m, m.sl))   #CANDIDATE
+#----------
+# Worst is  none  ( 7  )  STOP!!
+
+#Step AN     From Step AI, remove h.Area_Bot  -------
+i=-.50; i.sl=2; j=1.50; j.sl=0; m=-2.0; m.sl=-2
+vert.ahk.Dirk.Fireh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~ Fire,
+                    k ~TranDir + Rain ),
+         random=a+h+k~1|as.factor(Shrub),   
+         start=c(a=c(i),  h=c(j, j),   k=c(m,m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Dirk.Fireh.Raink.nlme)
+qqnorm(vert.ahk.Dirk.Fireh.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Dirk.Fireh.Raink.nlme)
+i=-.25; i.sl=2; j=1.25; j.sl=0; m=-1.5; m.sl=0
+vert.ah.Dirk.Fireh.Raink.nlme=update(vert.ahk.Dirk.Fireh.Raink.nlme, random=a+h~1|Shrub, start=c(a=c(i),  h=c(j, j),   k=c(m,m,m)))
+vert.ak.Dirk.Fireh.Raink.nlme=update(vert.ahk.Dirk.Fireh.Raink.nlme, random=a+k~1|Shrub)  #WONT CONVERGE
+vert.hk.Dirk.Fireh.Raink.nlme=update(vert.ahk.Dirk.Fireh.Raink.nlme, random=h+k~1|Shrub)  
+vert.a.Dirk.Fireh.Raink.nlme=update(vert.ahk.Dirk.Fireh.Raink.nlme, random=a~1|Shrub)
+vert.h.Dirk.Fireh.Raink.nlme=update(vert.ahk.Dirk.Fireh.Raink.nlme, random=h~1|Shrub)
+i=-.25; i.sl=2; j=1; j.sl=-2; m=-2.5; m.sl=0
+vert.k.Dirk.Fireh.Raink.nlme=update(vert.ahk.Dirk.Fireh.Raink.nlme, random=k~1|Shrub, start=c(a=c(i),  h=c(j, j),   k=c(m,m,m)))  
+#----------
+# Worst is   h.FireUB (6)
+# Next, remove h.FireUB  --> Step AL
+
+#Step AO     From Step AG, remove h.Area_Bot:FireUB  -------
+i=-.25; i.sl=2; j=1; j.sl=-2; m=-2; m.sl=-2
+vert.ahk.Szh.Dirhk.Fireh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot + TranDir + Fire,
+                    k ~TranDir + Rain ),
+         random=a+h+k~1|as.factor(Shrub),  #Three random effects wont converge...
+         start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme)
+qqnorm(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme)
+i=-.25; i.sl=2; j=1; j.sl=-2; m=-1.5; m.sl=-2
+vert.ah.Szh.Dirhk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme, random=a+h~1|Shrub,start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m,m)))
+i=-.5; i.sl=2; j=1.5; j.sl=-2; m=-2.5; m.sl=-2
+vert.ak.Szh.Dirhk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme, random=a+k~1|Shrub,start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m,m)))
+vert.hk.Szh.Dirhk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme, random=h+k~1|Shrub)  
+i=-.25; i.sl=2; j=1.25; j.sl=2; m=-2.5; m.sl=-2
+vert.a.Szh.Dirhk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme, random=a~1|Shrub,start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m,m)))
+i=-.5; i.sl=2; j=1.00; j.sl=2; m=-1.5; m.sl=-2
+vert.h.Szh.Dirhk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme, random=h~1|Shrub,start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m,m)))
+i=-.5; i.sl=1.5; j=1.5; j.sl=-2; m=-2.5; m.sl=-2
+vert.k.Szh.Dirhk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirhk.Fireh.Raink.nlme, random=k~1|Shrub,start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m,m)))  
+#----------
+# Worst is  h.FireUB (2)  h.TranDirS(4)  k.TranDirS(1)
+ 
+# Next, remove h.TranDirS --> Step    AI 
+# Next, remove  h.FireUB  --> Step  AP
+# Next, remove k.TranDirS  --> Step  AQ
+
+#Step AP     From Step AO, remove h.FireUB  -------
+i=-.25; i.sl=2; j=1.5; j.sl=2; m=-2.5; m.sl=-2
+vert.ahk.Szh.Dirhk.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot + TranDir,
+                    k ~TranDir + Rain ),
+         random=a+h+k~1|as.factor(Shrub),  #Three random effects wont converge...
+         start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szh.Dirhk.Raink.nlme)
+qqnorm(vert.ahk.Szh.Dirhk.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Szh.Dirhk.Raink.nlme)
+vert.ah.Szh.Dirhk.Raink.nlme=update(vert.ahk.Szh.Dirhk.Raink.nlme, random=a+h~1|Shrub)
+vert.ak.Szh.Dirhk.Raink.nlme=update(vert.ahk.Szh.Dirhk.Raink.nlme, random=a+k~1|Shrub)
+vert.hk.Szh.Dirhk.Raink.nlme=update(vert.ahk.Szh.Dirhk.Raink.nlme, random=h+k~1|Shrub)  
+i=-.5; i.sl=2; j=1.25; j.sl=0; m=-2.0; m.sl=-2
+vert.a.Szh.Dirhk.Raink.nlme=update(vert.ahk.Szh.Dirhk.Raink.nlme, random=a~1|Shrub,start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)))
+vert.h.Szh.Dirhk.Raink.nlme=update(vert.ahk.Szh.Dirhk.Raink.nlme, random=h~1|Shrub)
+vert.k.Szh.Dirhk.Raink.nlme=update(vert.ahk.Szh.Dirhk.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is h.TranDirS (7)
+# Next, remove h.TranDirS  --> Step  AJ    
+
+#Step AQ     From Step AO, remove k.TranDirS  -------
+i=-.25; i.sl=2; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
+vert.ahk.Szh.Dirh.Fireh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot + TranDir + Fire,
+                    k ~ Rain ),
+         random=a+h+k~1|as.factor(Shrub),  
+         start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szh.Dirh.Fireh.Raink.nlme)
+qqnorm(vert.ahk.Szh.Dirh.Fireh.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Szh.Dirh.Fireh.Raink.nlme)
+i=-.25; i.sl=1; j=1.25; j.sl=-2; m=-2; m.sl=-2
+vert.ah.Szh.Dirh.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirh.Fireh.Raink.nlme, random=a+h~1|Shrub,         start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m)))
+i=-.5; i.sl=1; j=1.5; j.sl=0; m=-2.5; m.sl=-2
+vert.ak.Szh.Dirh.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirh.Fireh.Raink.nlme, random=a+k~1|Shrub, start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m)))
+i=-.25; i.sl=1; j=1.5; j.sl=0; m=-2.5; m.sl=-2
+vert.hk.Szh.Dirh.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirh.Fireh.Raink.nlme, random=h+k~1|Shrub, start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m)))  
+i=-.25; i.sl=1; j=1.5; j.sl=0; m=-1.5; m.sl=-2
+vert.a.Szh.Dirh.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirh.Fireh.Raink.nlme, random=a~1|Shrub, start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m)))
+i=-.25; i.sl=1; j=1.25; j.sl=0; m=-1.5; m.sl=-2
+vert.h.Szh.Dirh.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirh.Fireh.Raink.nlme, random=h~1|Shrub, start=c(a=c(i),  h=c(j, j, j), c(j.sl),  k=c(m,m)))
+i=-.5; i.sl=1; j=1.5; j.sl=-2; m=-2.5; m.sl=-2
+vert.k.Szh.Dirh.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirh.Fireh.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is   h.TranDirS (3) none (1)  h.Area_Bot (2)  h.FireUB (1)
+# Next, remove  h.TranDirS --> Step  AR 
+# Next, remove  h.Area_Bot --> Step   AU
+# Next, remove  h.FireUB  --> Step AV
+
+#Step AR     From Step AQ, remove h.TranDirS  -------
+i=-.25; i.sl=1; j=1; j.sl=-2; m=-1.5; m.sl=-2
+vert.ah.Szh.Fireh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot + Fire,
+                    k ~ Rain ),
+         random=a+h~1|as.factor(Shrub),  #Three random effects wont converge...
+         start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m)),    
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ah.Szh.Fireh.Raink.nlme)
+qqnorm(vert.ah.Szh.Fireh.Raink.nlme, abline=c(0,1))
+plot(vert.ah.Szh.Fireh.Raink.nlme)
+#i=-.25; i.sl=1; j=1.25; j.sl=-2; m=-2; m.sl=-2
+#vert.ah.Szh.Fireh.Raink.nlme=update(vert.ah.Szh.Fireh.Raink.nlme, random=a+h~1|Shrub)
+i=-.5; i.sl=1; j=1; j.sl=2; m=-1.5; m.sl=-2
+vert.ak.Szh.Fireh.Raink.nlme=update(vert.ah.Szh.Fireh.Raink.nlme, random=a+k~1|Shrub,start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m)))
+i=-.5; i.sl=1; j=1.25; j.sl=2; m=-1.5; m.sl=-2
+vert.hk.Szh.Fireh.Raink.nlme=update(vert.ah.Szh.Fireh.Raink.nlme, random=h+k~1|Shrub,start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m)))  
+i=-.5; i.sl=1; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
+vert.a.Szh.Fireh.Raink.nlme=update(vert.ah.Szh.Fireh.Raink.nlme, random=a~1|Shrub,start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m)))
+i=-.5; i.sl=1; j=1.25; j.sl=-2; m=-2.5; m.sl=-2
+vert.h.Szh.Fireh.Raink.nlme=update(vert.ah.Szh.Fireh.Raink.nlme, random=h~1|Shrub,start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m)))
+i=-.5; i.sl=1; j=1.5; j.sl=-2; m=-2.5; m.sl=-2
+vert.k.Szh.Fireh.Raink.nlme=update(vert.ah.Szh.Fireh.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is    h.FireUB (3)  h.Area_Bot(3)
+# Next, remove  h.FireUB  --> Step  AK 
+# Next, remove  h.Area_Bot  --> Step  AS
+  
+#Step AS     From Step AR, remove h.Area_Bot -------
+i=-.25; i.sl=1; j=1; j.sl=-2; m=-1.5; m.sl=-2
+vert.ah.Fireh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~ Fire,
+                    k ~ Rain ),
+         random=a+h~1|as.factor(Shrub),  #Three random effects wont converge...
+         start=c(a=c(i),  h=c(j, j),   k=c(m,m)),    
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 because it only had one non-zero quadrat
+summary(vert.ah.Fireh.Raink.nlme)
+qqnorm(vert.ah.Fireh.Raink.nlme, abline=c(0,1))
+plot(vert.ah.Fireh.Raink.nlme)
+#i=-.25; i.sl=1; j=1.25; j.sl=-2; m=-2; m.sl=-2
+#vert.ah.Fireh.Raink.nlme=update(vert.ah.Fireh.Raink.nlme, random=a+h~1|Shrub)
+vert.ak.Fireh.Raink.nlme=update(vert.ah.Fireh.Raink.nlme, random=a+k~1|Shrub) #WONT CONVERGE
+i=-.5; i.sl=1; j=1.5; j.sl=-2; m=-2.5; m.sl=-2
+vert.hk.Fireh.Raink.nlme=update(vert.ah.Fireh.Raink.nlme, random=h+k~1|Shrub,start=c(a=c(i),  h=c(j, j),   k=c(m,m)))  
+i=-.25; i.sl=1; j=1; j.sl=-2; m=-2; m.sl=-2
+vert.a.Fireh.Raink.nlme=update(vert.ah.Fireh.Raink.nlme, random=a~1|Shrub,start=c(a=c(i),  h=c(j, j),   k=c(m,m)))
+vert.h.Fireh.Raink.nlme=update(vert.ah.Fireh.Raink.nlme, random=h~1|Shrub)   #CANDIDATE
+vert.k.Fireh.Raink.nlme=update(vert.ah.Fireh.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is    h.FireUB(4) none(1)  -> Step AT 
+# Next, remove  h.FireUB  --> Step     AM   STOP      1 CANDIDATE
+
+#Step AT     From Step AS, remove h.FireUB -------  
+i=-.5; i.sl=1; j=1.25; j.sl=-2; m=-2; m.sl=-2
+vert.ah.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~ 1,
+                    k ~ Rain ),
+         random=a+h~1|as.factor(Shrub),    #ahk won't converge
+         start=c(a=c(i),  h=c(j),   k=c(m,m)),    
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 because it only had one non-zero quadrat
+summary(vert.ah.Raink.nlme)
+qqnorm(vert.ah.Raink.nlme, abline=c(0,1))
+plot(vert.ah.Raink.nlme)
+#vert.ah.Raink.nlme=update(vert.ah.Raink.nlme, random=a+h~1|Shrub)
+vert.ak.Raink.nlme=update(vert.ah.Raink.nlme, random=a+k~1|Shrub) 
+i=-.25; i.sl=1; j=1.5; j.sl=-2; m=-2; m.sl=-2
+vert.hk.Raink.nlme=update(vert.ah.Raink.nlme, random=h+k~1|Shrub, start=c(a=c(i),  h=c(j),   k=c(m,m)))  
+vert.a.Raink.nlme=update(vert.ah.Raink.nlme, random=a~1|Shrub)  #CANDIDATE
+vert.h.Raink.nlme=update(vert.ah.Raink.nlme, random=h~1|Shrub)    #CANDIDATE 
+vert.k.Raink.nlme=update(vert.ah.Raink.nlme, random=k~1|Shrub)   #CANDIDATE 
+#---------- 
+# Worst is  none   STOP    3 CANDIDATES
+
+#Step AU     From Step AQ, remove h.Area_Bot  -------
+i=-.25; i.sl=2; j=1; j.sl=-2; m=-1.5; m.sl=-2
+vert.ahk.Dirh.Fireh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~ TranDir + Fire,
+                    k ~ Rain ),
+         random=a+h+k~1|as.factor(Shrub),  
+         start=c(a=c(i),  h=c(j, j, j),  k=c(m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Dirh.Fireh.Raink.nlme)
+qqnorm(vert.ahk.Dirh.Fireh.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Dirh.Fireh.Raink.nlme)
+i=-.25; i.sl=2; j=1.25; j.sl=-2; m=-1.5; m.sl=-2
+vert.ah.Dirh.Fireh.Raink.nlme=update(vert.ahk.Dirh.Fireh.Raink.nlme, random=a+h~1|Shrub, start=c(a=c(i),  h=c(j, j, j),  k=c(m,m)))
+i=-.25; i.sl=2; j=1.5; j.sl=-2; m=-2.0; m.sl=-2
+vert.ak.Dirh.Fireh.Raink.nlme=update(vert.ahk.Dirh.Fireh.Raink.nlme, random=a+k~1|Shrub, start=c(a=c(i),  h=c(j, j, j),  k=c(m,m)))
+vert.hk.Dirh.Fireh.Raink.nlme=update(vert.ahk.Dirh.Fireh.Raink.nlme, random=h+k~1|Shrub)  
+i=-.25; i.sl=2; j=1.5; j.sl=-2; m=-1.5; m.sl=-2
+vert.a.Dirh.Fireh.Raink.nlme=update(vert.ahk.Dirh.Fireh.Raink.nlme, random=a~1|Shrub, start=c(a=c(i),  h=c(j, j, j),  k=c(m,m)))
+vert.hk.Dirh.Fireh.Raink.nlme=update(vert.ahk.Dirh.Fireh.Raink.nlme, random=h+k~1|Shrub)  
+i=-.25; i.sl=2; j=1; j.sl=-2; m=-2.5; m.sl=-2
+vert.h.Dirh.Fireh.Raink.nlme=update(vert.ahk.Dirh.Fireh.Raink.nlme, random=h~1|Shrub, start=c(a=c(i),  h=c(j, j, j),  k=c(m,m)))
+i=-.25; i.sl=2; j=1; j.sl=-2; m=-2.5; m.sl=-2
+vert.k.Dirh.Fireh.Raink.nlme=update(vert.ahk.Dirh.Fireh.Raink.nlme, random=k~1|Shrub, start=c(a=c(i),  h=c(j, j, j),  k=c(m,m)))  
+#----------
+# Worst is   h.TranDirS (7)
+# Next, remove  h.TranDirS  --> Step   AS   STOP 
+
+#Step AV     From Step AQ, remove h.FireUB  -------
+i=-.5; i.sl=2; j=1; j.sl=0; m=-1.5; m.sl=-2
+vert.ahk.Szh.Dirh.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot + TranDir,
+                    k ~ Rain ),
+         random=a+h+k~1|as.factor(Shrub),  
+         start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szh.Dirh.Raink.nlme)
+qqnorm(vert.ahk.Szh.Dirh.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Szh.Dirh.Raink.nlme)
+
+vert.ah.Szh.Dirh.Raink.nlme=update(vert.ahk.Szh.Dirh.Raink.nlme, random=a+h~1|Shrub)
+vert.ak.Szh.Dirh.Raink.nlme=update(vert.ahk.Szh.Dirh.Raink.nlme, random=a+k~1|Shrub)
+vert.hk.Szh.Dirh.Raink.nlme=update(vert.ahk.Szh.Dirh.Raink.nlme, random=h+k~1|Shrub) 
+i=-.25; i.sl=2; j=1; j.sl=0; m=-1.5; m.sl=-2
+vert.a.Szh.Dirh.Raink.nlme=update(vert.ahk.Szh.Dirh.Raink.nlme, random=a~1|Shrub)
+vert.h.Szh.Dirh.Raink.nlme=update(vert.ahk.Szh.Dirh.Raink.nlme, random=h~1|Shrub)
+vert.k.Szh.Dirh.Raink.nlme=update(vert.ahk.Szh.Dirh.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is    h.TranDirS (7)
+# Next, remove  h.TranDirS  --> Step   AK  STOP 
+
+
+#Step AW     From Step G, remove a.TranDirS:FireUB  --------
+i=-.5; i.sl=2; j=1.5; j.sl=-2; m=-2; m.sl=2
+vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~Area_Bot + TranDir + Fire + Rain + Area_Bot:TranDir + Area_Bot:Fire + Area_Bot:Rain  + Fire:Rain,
+                    h ~Area_Bot + TranDir + Fire + Rain + Area_Bot:TranDir + Area_Bot:Fire + Fire:Rain,
+                    k ~Area_Bot + TranDir + Fire + Rain + Area_Bot:Fire),
+         random=a+h+k~1|as.factor(Shrub),  #Three random effects wont converge...
+         start=c(a=c(i,i,i,i), c(i.sl, i.sl,i.sl, j.sl, j.sl), h=c(j, j, j,j), c(j.sl, j.sl,j.sl, j.sl),  k=c(m,m,m), c(m.sl, m.sl,m.sl)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme)
+qqnorm(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme, abline=c(0,1))
+plot(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme)
+#START HERE
+vert.ah.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=update(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme, random=a+h~1|Shrub)
+vert.ak.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=update(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme, random=a+k~1|Shrub)
+vert.hk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=update(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme, random=h+k~1|Shrub)  
+vert.a.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=update(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme, random=a~1|Shrub)
+vert.h.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=update(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme, random=h~1|Shrub)
+vert.k.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=update(vert.ahk.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme, random=k~1|Shrub)  
+#----------
+# Worst is   
+# Next, remove     --> Step    
+
+
+
+
+
+
+
+
+
+#CANDIDATE MODELS
+
+AIC(vert.ah.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #318.5451 
+AIC(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #318.5451 
+AIC(vert.hk.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #319.7501
+AIC(vert.a.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) # 314.5451
+AIC(vert.h.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #315.7497 
+AIC(vert.k.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #314.5451
+#Did resid plot and qqnorm on all above and all were fine
+
+#Higher AIC than 320--------
+AIC(vert.hk.Szk.Dira.Firek.Raink.SzFirek.nlme)
+AIC(vert.a.Szk.Dira.Firek.Raink.SzFirek.nlme)
+AIC(vert.h.Szk.Dira.Firek.Raink.SzFirek.nlme)
+AIC(vert.k.Szk.Dira.Firek.Raink.SzFirek.nlme)
+AIC(vert.a.Szak.Nointa.Firek.Raink.SzFirek.nlme)
+AIC(vert.h.Szak.Nointa.Firek.Raink.SzFirek.nlme)
+AIC(vert.k.Szak.Nointa.Firek.Raink.SzFirek.nlme)
+AIC(vert.ah.Szh.Raink.nlme)
+AIC(vert.a.Szh.Raink.nlme)
+AIC(vert.h.Szh.Raink.nlme)
+AIC(vert.k.Szh.Raink.nlme)
+AIC(vert.h.Dirk.Raink.nlme)
+AIC(vert.ah.Raink.nlme)
+AIC(vert.a.Raink.nlme)
+AIC(vert.h.Raink.nlme)
+AIC(vert.k.Raink.nlme)
+AIC(vert.h.Fireh.Raink.nlme)
+AIC(vert.a.Raink.nlme)
+AIC(vert.h.Raink.nlme)
+AIC(vert.k.Raink.nlme)
+#----------
+
+ErodMoj.models=list(vert.ah.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
+vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
+vert.hk.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
+vert.a.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
+vert.h.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
+vert.k.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme)
+
+save(ErodMoj.models,file="ErodMojCandidateModels")
+load("ErodMojCandidateModels")
+unlist(ErodMoj.models)
+
+apply(ErodMoj.models, coef)
+fixed.effects(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #Fixed effect parameters
+
+VarCorr(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme)[,2]  # variance parameters
+
+c(fixed.effects(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme), VarCorr(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme)[,2] )
+fixef=lapply(ErodMoj.models, fixed.effects)
+varpars=lapply(ErodMoj.models, function(x) VarCorr(x)[,2])
+
+unlist(blurf)
+class(blurf)
+df=data.frame(matrix(unlist(blurf), ncol=length(blurf[[1]]), byrow=T))
+names(df)=names(blurf[[1]])
+write.csv(df, file="VegSpatialModeling/ErodMojfixed.csv", row.names=F)
+
+
+
+#  Test with Census.Test---------- 
+
+
+INVlogit.transform(predict(ErodMoj.models[[1]], newdata=Census.Test, level=0))
+
+
+predict(ErodMoj.models[[1]], newdata=Census.Test, level=0)
+
+plot(Census.Test$LogitTarg, predict(ErodMoj.models[[1]], newdata=Census.Test, level=0))
+abline(0,1)
+Census.Test  
+Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,]$Target
+Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,]$LogitTarg
+
 

@@ -41,35 +41,34 @@ counter=0
 ModelResults=data.frame(AIC=NA, a=NA, a.sl=NA, h=NA, h.sl=NA,  k=NA, k.sl=NA)
 i=i.sl=j=j.sl=m=m.sl=NA
 for (i in i.seq){    	#a  flattness parameter
-    #for (i.sl in i.sl.seq){
+    for (i.sl in i.sl.seq){
         for (j in j.seq){		#h x location of vertex
             for (j.sl in j.sl.seq){
                 for (m in m.seq){	#k y location of vertex
-                    #for (m.sl in m.sl.seq){
+                    for (m.sl in m.sl.seq){
                         vert.nlme=try(nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
-                                           fixed=list(a ~1,
-                                                      h ~Area_Bot +  Fire,
-                                                      k ~TranDir + Rain ),
-                                           random=h~1|as.factor(Shrub),   
-                                           start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)), 
-                                           data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
-                                     , silent=FALSE) #end try
+         fixed=list(a ~Area_Bot + TranDir + Fire + Rain + Area_Bot:TranDir + Area_Bot:Fire + Area_Bot:Rain  + Fire:Rain,
+                    h ~Area_Bot + TranDir + Fire + Rain + Area_Bot:TranDir + Area_Bot:Fire + Fire:Rain,
+                    k ~Area_Bot + TranDir + Fire + Rain + Area_Bot:Fire),
+         random=a+h+k~1|as.factor(Shrub),  #Three random effects wont converge...
+         start=c(a=c(i,i,i,i), c(i.sl, i.sl,i.sl, j.sl, j.sl), h=c(j, j, j,j), c(j.sl, j.sl,j.sl, j.sl),  k=c(m,m,m), c(m.sl, m.sl,m.sl)), 
+                                        data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 because it only had one non-zero quadrat
+                        , silent=FALSE) #end try
                         try(print(summary(vert.nlme), silent=TRUE))
                         counter=counter+1
                         print(paste(i,i.sl, j, j.sl, m, m.sl))
                         print(paste("Run ",counter, " of ", length(i.seq)*length(i.sl.seq)*length(j.seq)*length(j.sl.seq)*length(m.seq)*length(m.sl.seq)))
                         aic=try(AIC(vert.nlme), silent=TRUE) 
                         if(class(aic)!="try-error") ModelResults=rbind(ModelResults, c(aic, i, i.sl, j, j.sl, m, m.sl))          
-                   # }#end m.sl loop
+                    }#end m.sl loop
                 }#end m loop
             }#end j.sl loop
         }#end j loop
-    #}#end i.sl loop
+    }#end i.sl loop
 }#end i loop
 
 
 ModelResults
-#table(ModelResults[,2]); table(ModelResults[,3]); table(ModelResults[,4]); table(ModelResults[,5]); 
 ModelResults[with(ModelResults, order(AIC)),][1:10,]
 ModelResults[which.min(ModelResults$AIC),]
 ModelResults[which(ModelResults$AIC>0),]
