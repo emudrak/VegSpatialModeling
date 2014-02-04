@@ -48,10 +48,10 @@ for (i in i.seq){    	#a  flattness parameter
                     #for (m.sl in m.sl.seq){
                         vert.nlme=try(nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
                                            fixed=list(a ~1,
-                                                      h ~Area_Bot +  Fire,
+                                                      h ~Area_Bot,
                                                       k ~TranDir + Rain ),
-                                           random=h~1|as.factor(Shrub),   
-                                           start=c(a=c(i),  h=c(j, j), c(j.sl),  k=c(m,m,m)), 
+                                           random=a+h+k~1|as.factor(Shrub),   
+                                           start=c(a=c(i),  h=c(j), c(j.sl),  k=c(m,m,m)), 
                                            data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
                                      , silent=FALSE) #end try
                         try(print(summary(vert.nlme), silent=TRUE))
@@ -69,7 +69,6 @@ for (i in i.seq){    	#a  flattness parameter
 
 
 ModelResults
-#table(ModelResults[,2]); table(ModelResults[,3]); table(ModelResults[,4]); table(ModelResults[,5]); 
 ModelResults[with(ModelResults, order(AIC)),][1:10,]
 ModelResults[which.min(ModelResults$AIC),]
 ModelResults[which(ModelResults$AIC>0),]
