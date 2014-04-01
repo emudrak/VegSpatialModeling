@@ -47,6 +47,7 @@ for (i in i.seq){    	#a  flattness parameter
                 for (m in m.seq){	#k y location of vertex
                     for (m.sl in m.sl.seq){
                         vert.nlme=try(nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+<<<<<<< HEAD
          fixed=list(a ~Area_Bot + TranDir + Fire + Rain + Area_Bot:TranDir + Area_Bot:Fire + Area_Bot:Rain  + Fire:Rain,
                     h ~Area_Bot + TranDir + Fire + Rain + Area_Bot:TranDir + Area_Bot:Fire + Fire:Rain,
                     k ~Area_Bot + TranDir + Fire + Rain + Area_Bot:Fire),
@@ -54,6 +55,15 @@ for (i in i.seq){    	#a  flattness parameter
          start=c(a=c(i,i,i,i), c(i.sl, i.sl,i.sl, j.sl, j.sl), h=c(j, j, j,j), c(j.sl, j.sl,j.sl, j.sl),  k=c(m,m,m), c(m.sl, m.sl,m.sl)), 
                                         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 because it only had one non-zero quadrat
                         , silent=FALSE) #end try
+=======
+                                           fixed=list(a ~1,
+                                                      h ~Area_Bot,
+                                                      k ~TranDir + Rain ),
+                                           random=a+h+k~1|as.factor(Shrub),   
+                                           start=c(a=c(i),  h=c(j), c(j.sl),  k=c(m,m,m)), 
+                                           data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+                                     , silent=FALSE) #end try
+>>>>>>> 25451899e8757036681b5de6b67c7e537bf10016
                         try(print(summary(vert.nlme), silent=TRUE))
                         counter=counter+1
                         print(paste(i,i.sl, j, j.sl, m, m.sl))

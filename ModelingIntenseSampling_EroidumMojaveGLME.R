@@ -1348,6 +1348,7 @@ vert.k.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, rand
 # Worst is   h.FireUB (6)
 # Worst is   h.Area_Bot (1)
 # Next, remove  h.FireUB     --> Step  AJ 
+<<<<<<< HEAD
 # Next, remove h.Area_Bot --> Step    AN
 
 #Step AJ     From Step AI, remove h.FireUB  -------
@@ -1798,5 +1799,32 @@ abline(0,1)
 Census.Test  
 Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,]$Target
 Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,]$LogitTarg
+=======
+# Next, remove h.Area_Bot --> Step    ?????????
+>>>>>>> 25451899e8757036681b5de6b67c7e537bf10016
 
 
+#Step AJ     From Step AI, remove h.FireUB  -------
+i=-.25; i.sl=1; j=1.50; j.sl=0; m=-2; m.sl=-2
+vert.ahk.Szh.Dirk.Raink.nlme=
+    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
+         fixed=list(a ~1,
+                    h ~Area_Bot,
+                    k ~TranDir + Rain ),
+         random=a+h+k~1|as.factor(Shrub),   
+         start=c(a=c(i),  h=c(j), c(j.sl),  k=c(m,m,m)), 
+         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
+summary(vert.ahk.Szh.Dirk.Raink.nlme)
+qqnorm(vert.ahk.Szh.Dirk.Raink.nlme, abline=c(0,1))
+plot(vert.ahk.Szh.Dirk.Raink.nlme)
+vert.ah.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a+h~1|Shrub)
+vert.ak.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a+k~1|Shrub)
+vert.hk.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=h+k~1|Shrub)  
+vert.a.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a~1|Shrub)
+vert.h.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=h~1|Shrub)
+vert.k.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=k~1|Shrub)  
+#----------
+# Worst is   k.TranDirS (5)
+# Worst is    h.Area_Bot (2 )
+# Next, remove   k.TranDirS     --> Step   AK   START HERE
+# Next, remove  h.Area_Bot --> Step    ?????????
