@@ -545,8 +545,12 @@ return(list(image=PredNut.im))
 ###################################################################################
 ApplyQuadVertexModel=function(Model, ShrubData, ObsNutData, BlankImage.im, Allometry  ) {
     # Applies Quadratic model written in vertex form to make a plant density hotspot map image. 
-    # Model is a data frame with 1 row with columns   "Desert"     "Nutrient"   "Model"      a.(Intercept)    a.Area_Bot    a.TranDirS	a.Area_Bot:TranDirS	h.(Intercept)	h.Area_Bot	h.TranDirS	k.(Intercept)	k.Area_Bot	k.FireUB	k.RainD	k.Area_Bot:FireUB	a.(Intercept)	h.(Intercept)	k.(Intercept)	Residual"
-    
+    # Model is a data frame with 1 row with columns    
+    #    [1] "Desert"            "Spec"                 "Model"         "a..Intercept."      
+    #  [5] "a.Area_Bot"         "a.TranDirS"        "a.Area_Bot.TranDirS" "h..Intercept."      
+    #  [9] "h.Area_Bot"         "h.TranDirS"          "k..Intercept."       "k.Area_Bot"         
+    # [13] "k.FireUB"            "k.RainD"      "k.Area_Bot.FireUB"   "a..Intercept..1"    
+    # [17] "h..Intercept..1"     "k..Intercept..1"     "Residual"      
     # ShrubData is a data frame containing information on shrubs in area to be mapped: 
     #  	columns: "ShrubID","Easting","Northing","Area_Bot","Area_Stem"
     # InterspaceData is a data frame with fitted lognormal models to interpace data (samples > 150cm from shrub stem)
@@ -563,10 +567,28 @@ ApplyQuadVertexModel=function(Model, ShrubData, ObsNutData, BlankImage.im, Allom
     #ycoords=BlankImage.im$yrow
     
     # Sample Shrub is the list of shrubs to model against. 
-    SampleShrub=subset(ShrubData,(Northing<=Ymax)&(Northing>=Ymin)&(Easting<=Xmax)&(Easting>=Xmin),  #Only want shrubs within boundaries
-    			select=c("ShrubID","Easting","Northing","Area_Bot","Area_Stem"))	#Only want certain info
+    SampleShrub=subset( ShrubData,(Northing<=Ymax)&(Northing>=Ymin)&(Easting<=Xmax)&(Easting>=Xmin),  select=c("ShrubID","Easting","Northing","Area_Bot","Area_Stem","TranDir","Fire","Rain"))	#Only want Shrubs within boundaries and only want certain info
     rownames(SampleShrub)=1:nrow(SampleShrub)
     nrow(SampleShrub)
+    SS=SampleShrub  #just to shorten the crazy code below...
+
+    rownames(SS)=1:nrow(SS)
+    nrow(SS)
+    SS$TranDirDummy=as.numeric(SS$TranDir)-1  #Now N=0 and S=1
+    SS$FireDummy=as.numeric(SS$Fire)-1  #Now B=0 and UB=1
+    SS$RainDummy=as.numeric(SS$Rain)-1  #Now A=0 and D=1
+    a.rand=rnorm(nrow(SS),0,Model$a..Intercept..1)
+    h.rand=rnorm(nrow(SS),0,Model$h..Intercept..1)
+    k.rand=rnorm(nrow(SS),0,Model$k..Intercept..1)
+#Change the random process part to inside the loop???
+    SS$a=Model$a..Intercept.+ Model$a.Area_Bot * SS$Area_Bot + Model$a.TranDirS*SS$TranDirDummy+ Model$a.Area_Bot.TranDirS*SS$Area_Bot*SS$TranDirDummy+a.rand
+    SS$h=Model$h..Intercept.+ Model$h.Area_Bot * SS$Area_Bot + Model$h.TranDirS*SS$TranDirDummy+h.rand
+    SS$k=Model$k..Intercept.+ Model$k.Area_Bot * SS$Area_Bot + Model$k.FireUB*SS$FireDummy+Model$k.RainD*SS$RainDummy + Model$k.Area_Bot.FireUB*SS$Area_Bot*SS$FireDummy+k.rand
+
+SampleShrub=SS
+    
+
+
     
     A.rand=rnorm(nrow(SampleShrub),0,Model$a..Intercept..1)
     H.rand=rnorm(nrow(SampleShrub),0,Model$h..Intercept..1)

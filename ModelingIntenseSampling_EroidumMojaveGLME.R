@@ -157,10 +157,11 @@ yplotmax=max(Census.Train[,TargSpec])
 
 
 
-yplotmax=max(Census.Train$LogitTarg)
-hist(Census.Train$LogitTarg)
 
 #Plot With transformed response:##################################
+
+yplotmax=max(Census.Train$LogitTarg)
+hist(Census.Train$LogitTarg)
 
 windows(7,10)
 par(mfrow=c(3,1))
@@ -204,7 +205,51 @@ for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
 legend(200,0.90* yplotmax, levels(Census.Train$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
 
 
-     
+#Plot With % cover response:##################################
+
+yplotmax=max(Census.Train$Target)
+hist(Census.Train$Target)
+windows(7,10)
+par(mfrow=c(3,1))
+#With Fire Colors
+with(Census.Train, plot(c(1,xplotmax), range(Census.Train$Target/100) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("% Cover", ylabel), xlab="Distance from Shrub Stem" ))
+for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber   
+  myburn=Census.Train$Fire[Census.Train$Shrub==i][1]  
+  lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
+        Census.Train$Target[Census.Train$Shrub==i]/100,   
+        pch=20,lwd=2, type="o", lty=1,
+        col=firecols[myburn]
+        
+  )
+  print(i)
+  print(myburn)
+} # end of i loop
+legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=firecols, lwd=2, lty=1, bty="n")      #IF a 2012 Census.Train
+
+#With Rain Colors
+with(Census.Train, plot(c(1,xplotmax), range(Census.Train$Target/100) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=ylabel, xlab="Distance from Shrub Stem" ))
+for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
+  mywater=Census.Train$Rain[Census.Train$Shrub==i][1]  
+  lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
+        Census.Train$Target[Census.Train$Shrub==i]/100,   
+        pch=20,lwd=2, type="o", lty=1,
+        col=watercols[mywater]
+  )
+} # end of i loop
+legend(200,0.90* yplotmax, levels(Census.Train$Rain), col=watercols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+
+#With Direction Colors
+with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
+for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
+  mydir=Census.Train$TranDir[Census.Train$Shrub==i][1]
+  lines(Census.Train$PlotDist[Census.Train$Shrub==i],
+        Census.Train$LogitTarg[Census.Train$Shrub==i], 
+        pch=20,lwd=2, type="o", lty=1,
+        col=dircols[mydir]
+  )
+} # end of i loop
+legend(200,0.90* yplotmax, levels(Census.Train$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+
      
 #---------------------------------------------------------------------------------------------
 
@@ -336,8 +381,62 @@ INVlogit.transform(fixed.effects(hurdle6.lme))
 
 predict(hurdle6.lme, Census.Test, allow.new.levels=TRUE)  
 #Not stochastic, uses population level data for previously unobserved levels
-plot(INVlogit.transform(predict(hurdle6.lme, Census.Test, allow.new.levels=TRUE)), jitter(Census.Test$TargPres) ) 
+plot(INVlogit.transform(predict(hurdle6.lme, Census.Test, allow.new.levels=TRUE)), jitter(Census.Test$TargPres), xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
 #That looks pretty good
+#Plot as distance from shrub
+Stg1Model=data.frame(t(fixed.effects(hurdle6.lme)))
+
+col=watercols[SampleShrub$Rain[i]]
+col=firecols[SampleShrub$Fire[i]]
+col=dircols[SampleShrub$TranDir[i]]
+
+ltys=c(1,5)
+
+plot(c(0, 260), c(0,1), pch=NA, xlab="Distance from Shrub (cm)", ylab="P(plant present)")
+
+for (i in 1:nrow(SampleShrub)){
+    new.x=seq(0,260, by=20)
+    #Stage 1- 
+   logitp=Stg1Model$X.Intercept. + Stg1Model$RainD*SampleShrub$RainDummy[i]+Stg1Model$PlotDist*new.x + Stg1Model$TranDirS*SampleShrub$TranDirDummy[i]+ Stg1Model$I.PlotDist.2.*(new.x^2)+ Stg1Model$FireUB*SampleShrub$FireDummy[i] + Stg1Model$PlotDist.TranDirS*SampleShrub$TranDirDummy[i]*new.x+ Stg1Model$TranDirS.I.PlotDist.2.*SampleShrub$TranDirDummy[i]*(new.x^2)+ Stg1Model$PlotDist.FireUB*SampleShrub$FireDummy[i]*new.x+ Stg1Model$I.PlotDist.2..FireUB*SampleShrub$FireDummy[i]*(new.x^2)
+    
+    p=INVlogit.transform(logitp)
+    lines(new.x, p, col=watercols[SampleShrub$Rain[i]], lty=ltys[SampleShrub$Fire[i]], lwd=3)
+}
+legend(100, 0.6, c("Ambient", "Drought"), col=watercols, lty=1, lwd=3)
+legend(100, 0.4, c("Unburned", "Burned"), col="gray50", lty=c(1,2), lwd=3)
+
+#Eekk!  But it didn't include size. try with size: 
+
+sizehurdle.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2) + Area_Bot:Fire + Area_Bot:Rain + Area_Bot:Rain + Area_Bot:PlotDist+ Area_Bot:I(PlotDist^2) + 
+        Fire:Rain + Fire:TranDir+ Fire:PlotDist + Fire:I(PlotDist^2) + 
+             Rain:PlotDist + Rain:I(PlotDist^2) + 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle.lme)
+
+sizehurdle2.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2) + Area_Bot:Fire + Area_Bot:Rain + Area_Bot:Rain + Area_Bot:PlotDist+ Area_Bot:I(PlotDist^2) + 
+        Fire:Rain + Fire:TranDir+ Fire:PlotDist + Fire:I(PlotDist^2)+ 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle2.lme)
+
+sizehurdle3.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2) + Area_Bot:Fire + Area_Bot:Rain + Area_Bot:PlotDist+ Area_Bot:I(PlotDist^2) + 
+ Fire:PlotDist + Fire:I(PlotDist^2)+ 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle3.lme)
+
+sizehurdle4.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2)+  Fire:PlotDist + Fire:I(PlotDist^2)+ 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle4.lme)
+
+#AreaBot not significant.....
+
 
 # Look at presence only crosstabs -------
 
@@ -417,49 +516,53 @@ plot(non.zero7.lme)
 #Try vertex form, and non-linear modeling...
 
 #Plot with Positive only data --------
-Pos.Train=Census.Train[Census.Train$Target>0,]
+Pos.Data=Census.Train[Census.Train$Target>0,]
+Pos.Data=Census.Test[Census.Test$Target>0,]
 
-yplotmax=max(Pos.Train$LogitTarg)
-hist(Pos.Train$LogitTarg)
+yplotmax=max(Pos.Data$LogitTarg)
+hist(Pos.Data$LogitTarg)
 
 windows(7,10)
 par(mfrow=c(3,1))
 #With Fire Colors
-with(Pos.Train, plot(c(1,xplotmax), range(Pos.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Pos.Train$Shrub)) {  # i=ShrubNumber   
-    myburn=Pos.Train$Fire[Pos.Train$Shrub==i][1]  
-    lines(Pos.Train$PlotDist[(Pos.Train$Shrub==i)],
-          Pos.Train$LogitTarg[Pos.Train$Shrub==i],   
+with(Pos.Data, plot(c(1,xplotmax), range(Pos.Data$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=ylabel, xlab="Distance from Shrub Stem" , yaxt="n"))
+axis(2, at=logit.transform(seq(0,0.35, by=0.05)), labels=seq(0,0.35, by=0.05))
+for (i in unique(Pos.Data$Shrub)) {  # i=ShrubNumber   
+    myburn=Pos.Data$Fire[Pos.Data$Shrub==i][1]  
+    lines(Pos.Data$PlotDist[(Pos.Data$Shrub==i)],
+          Pos.Data$LogitTarg[Pos.Data$Shrub==i],   
           pch=20,lwd=2, type="o", lty=1,
           col=firecols[myburn]
           
     )
 } # end of i loop
-legend(200,0.90* yplotmax, levels(Pos.Train$Fire), col=firecols, lwd=2, lty=1, bty="n")      #IF a 2012 Pos.Train
+legend(200,0.90* yplotmax, levels(Pos.Data$Fire), col=firecols, lwd=2, lty=1, bty="n")      #IF a 2012 Pos.Data
 
 #With Rain Colors
-with(Pos.Train, plot(c(1,xplotmax), range(Pos.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Pos.Train$Shrub)) {  # i=ShrubNumber
-    mywater=Pos.Train$Rain[Pos.Train$Shrub==i][1]  
-    lines(Pos.Train$PlotDist[(Pos.Train$Shrub==i)],
-          Pos.Train$LogitTarg[Pos.Train$Shrub==i],   
+with(Pos.Data, plot(c(1,xplotmax), range(Pos.Data$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=ylabel, xlab="Distance from Shrub Stem", yaxt="n"))
+axis(2, at=logit.transform(seq(0,0.35, by=0.05)), labels=seq(0,0.35, by=0.05))
+for (i in unique(Pos.Data$Shrub)) {  # i=ShrubNumber
+    mywater=Pos.Data$Rain[Pos.Data$Shrub==i][1]  
+    lines(Pos.Data$PlotDist[(Pos.Data$Shrub==i)],
+          Pos.Data$LogitTarg[Pos.Data$Shrub==i],   
           pch=20,lwd=2, type="o", lty=1,
           col=watercols[mywater]
     )
 } # end of i loop
-legend(200,0.90* yplotmax, levels(Pos.Train$Rain), col=watercols, lwd=2, lty=1, bty="n")  	#IF a 2012 Pos.Train
+legend(200,0.90* yplotmax, levels(Pos.Data$Rain), col=watercols, lwd=2, lty=1, bty="n")  	#IF a 2012 Pos.Data
 
 #With Direction Colors
-with(Pos.Train, plot(c(0,xplotmax/100), range(Pos.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Pos.Train$Shrub)) {  # i=ShrubNumber
-    mydir=Pos.Train$TranDir[Pos.Train$Shrub==i][1]
-    lines((Pos.Train$PlotDist[Pos.Train$Shrub==i]/100),
-          Pos.Train$LogitTarg[Pos.Train$Shrub==i], 
+with(Pos.Data, plot(c(0,xplotmax/100), range(Pos.Data$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab= ylabel, xlab="Distance from Shrub Stem" , yaxt="n"))
+axis(2, at=logit.transform(seq(0,0.35, by=0.05)), labels=seq(0,0.35, by=0.05))
+for (i in unique(Pos.Data$Shrub)) {  # i=ShrubNumber
+    mydir=Pos.Data$TranDir[Pos.Data$Shrub==i][1]
+    lines((Pos.Data$PlotDist[Pos.Data$Shrub==i]/100),
+          Pos.Data$LogitTarg[Pos.Data$Shrub==i], 
           pch=20,lwd=2, type="o", lty=1,
           col=dircols[mydir]
     )
 } # end of i loop
-legend(200,0.90* yplotmax, levels(Pos.Train$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+legend(200,0.90* yplotmax, levels(Pos.Data$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
 
 # Get reasonable starting values for vertex model---------
 
@@ -1348,7 +1451,6 @@ vert.k.Szh.Dirk.Fireh.Raink.nlme=update(vert.ahk.Szh.Dirk.Fireh.Raink.nlme, rand
 # Worst is   h.FireUB (6)
 # Worst is   h.Area_Bot (1)
 # Next, remove  h.FireUB     --> Step  AJ 
-<<<<<<< HEAD
 # Next, remove h.Area_Bot --> Step    AN
 
 #Step AJ     From Step AI, remove h.FireUB  -------
@@ -1730,9 +1832,9 @@ vert.k.Szahk.Dirahk.Fireahk.Rainahk.SzDirah.SzFireahk.SzRaina.FireRainah.nlme=up
 AIC(vert.ah.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #318.5451 
 AIC(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #318.5451 
 AIC(vert.hk.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #319.7501
-AIC(vert.a.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) # 314.5451
-AIC(vert.h.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #315.7497 
-AIC(vert.k.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #314.5451
+ AIC(vert.a.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) # 314.5451
+ AIC(vert.h.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #315.7497 
+ AIC(vert.k.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #314.5451
 #Did resid plot and qqnorm on all above and all were fine
 
 #Higher AIC than 320--------
@@ -1758,7 +1860,8 @@ AIC(vert.h.Raink.nlme)
 AIC(vert.k.Raink.nlme)
 #----------
 
-ErodMoj.models=list(vert.ah.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
+ErodMoj.models=list(
+vert.ah.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
 vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
 vert.hk.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
 vert.a.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme,
@@ -1769,14 +1872,19 @@ save(ErodMoj.models,file="ErodMojCandidateModels")
 load("ErodMojCandidateModels")
 unlist(ErodMoj.models)
 
-apply(ErodMoj.models, coef)
-fixed.effects(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #Fixed effect parameters
+
+vert.ah.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme=ErodMoj.models[[1]]
+
+lapply(ErodMoj.models, coef)
+fixed.effects(vert.ah.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme) #Fixed effect parameters
 
 VarCorr(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme)[,2]  # variance parameters
 
 c(fixed.effects(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme), VarCorr(vert.ak.Szahk.Dirah.Firek.Raink.SzDira.SzFirek.nlme)[,2] )
 fixef=lapply(ErodMoj.models, fixed.effects)
 varpars=lapply(ErodMoj.models, function(x) VarCorr(x)[,2])
+
+##Combine these somehow to make df
 
 unlist(blurf)
 class(blurf)
@@ -1801,30 +1909,7 @@ Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,]$Target
 Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,]$LogitTarg
 =======
 # Next, remove h.Area_Bot --> Step    ?????????
->>>>>>> 25451899e8757036681b5de6b67c7e537bf10016
 
-
-#Step AJ     From Step AI, remove h.FireUB  -------
-i=-.25; i.sl=1; j=1.50; j.sl=0; m=-2; m.sl=-2
-vert.ahk.Szh.Dirk.Raink.nlme=
-    nlme(LogitTarg~a*((PlotDist/100)-h)^2+k, 
-         fixed=list(a ~1,
-                    h ~Area_Bot,
-                    k ~TranDir + Rain ),
-         random=a+h+k~1|as.factor(Shrub),   
-         start=c(a=c(i),  h=c(j), c(j.sl),  k=c(m,m,m)), 
-         data=Census.Train[(Census.Train$Target>0) & Census.Train$Shrub!=166,])  #Need to remove shrub 166 becasue it only had one non-zero quadrat
-summary(vert.ahk.Szh.Dirk.Raink.nlme)
-qqnorm(vert.ahk.Szh.Dirk.Raink.nlme, abline=c(0,1))
-plot(vert.ahk.Szh.Dirk.Raink.nlme)
-vert.ah.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a+h~1|Shrub)
-vert.ak.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a+k~1|Shrub)
-vert.hk.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=h+k~1|Shrub)  
-vert.a.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=a~1|Shrub)
-vert.h.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=h~1|Shrub)
-vert.k.Szh.Dirk.Raink.nlme=update(vert.ahk.Szh.Dirk.Raink.nlme, random=k~1|Shrub)  
-#----------
-# Worst is   k.TranDirS (5)
-# Worst is    h.Area_Bot (2 )
-# Next, remove   k.TranDirS     --> Step   AK   START HERE
-# Next, remove  h.Area_Bot --> Step    ?????????
+    
+    
+    
