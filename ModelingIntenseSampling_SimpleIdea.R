@@ -290,7 +290,51 @@ for (i in unique(Train.Outer$Shrub)) {  # i=ShrubNumber
 legend(200,0.90* yplotmax, levels(Train.Outer$Fire), col=firecols, lwd=2, lty=1, bty="n")      #IF a 2012 Train.Outer
 
 library(lme4)
+library(lmerTest)
 
-linmod.lme=lmer(LogitTarg~PlotDist*Area_Bot*Fire*Rain+(1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+linmod1.lme=lmer(LogitTarg~PlotDist*Area_Bot*Fire*Rain+(1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod1.lme)
+drop1(linmod1.lme)
 
-summary(linmod.lme)
+linmod2.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^3+(1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod2.lme)
+drop1(linmod2.lme)
+
+linmod3.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2+PlotDist:Area_Bot:Fire+PlotDist:Area_Bot:Rain+PlotDist:Fire:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod3.lme)
+drop1(linmod3.lme)
+
+
+linmod4.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2+PlotDist:Area_Bot:Fire+PlotDist:Area_Bot:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod4.lme)
+drop1(linmod4.lme)
+
+
+linmod5.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2+PlotDist:Area_Bot:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod5.lme)
+drop1(linmod5.lme)
+
+
+
+linmod5.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+ PlotDist:Area_Bot + PlotDist:Rain + Area_Bot:Fire + Area_Bot:Rain + Fire:Rain+PlotDist:Area_Bot:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod5.lme)
+drop1(linmod5.lme)
+
+
+
+linmod6.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+ PlotDist:Area_Bot + PlotDist:Rain + Area_Bot:Fire + Area_Bot:Rain + Fire:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod6.lme)
+drop1(linmod6.lme)
+
+linmod7.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+ PlotDist:Area_Bot + PlotDist:Rain + Area_Bot:Fire + Fire:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod7.lme)
+drop1(linmod7.lme)
+
+linmod8.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+ PlotDist:Area_Bot + PlotDist:Rain  + Fire:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod8.lme)
+drop1(linmod8.lme)
+
+linmod9.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+ PlotDist:Area_Bot   + Fire:Rain + (1|Shrub), data=Census.Train[Census.Train$Outer==TRUE & Census.Train$Shrub!=166,])
+summary(linmod9.lme)
+drop1(linmod9.lme)
+## FINAL
