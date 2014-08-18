@@ -40,9 +40,9 @@ YEAR="2013Xtra"
 
 
 if((DESERT=="Mojave") & (YEAR=="2013Xtra")){
-  CensusData=read.csv("VegSpatialModeling/Mojave2013Intense24Shrubs.csv", blank.lines.skip=TRUE)
+  CensusData=read.csv("Mojave2013Intense24Shrubs.csv", blank.lines.skip=TRUE)
   CensusData$Invasives=CensusData$Erodium+CensusData$Schismus+CensusData$Bromus
-  Shrubs=read.csv("VegSpatialModeling/CALarreaVolume.csv")
+  Shrubs=read.csv("CALarreaVolume.csv")
   Shrubs=subset(Shrubs, ShrubID %in% as.character(1:168))
   Shrubs$Shrub=as.numeric(as.character(Shrubs$ShrubID)) 
 }
@@ -338,3 +338,24 @@ linmod9.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+ PlotDist:Area_Bot   + Fi
 summary(linmod9.lme)
 drop1(linmod9.lme)
 ## FINAL
+
+
+#Dripline in cm
+Census.Test$Dripline=sqrt(Census.Test$Area_Bot/pi)*100
+hist(Census.Test$Dripline)
+
+
+Census.Train$Shrub[which.max(Census.Train$Dripline)]
+Census.Train[Census.Train$Shrub==3,]
+
+
+# Show only plots outside Canopy Dripline
+Census.Test$Outer=Census.Test$PlotDist>Census.Test$Dripline
+
+#Try on Testing Data
+Census.Test$Pred=NA
+Census.Test[Census.Test$Outer==TRUE,"Pred"]=predict(linmod9.lme,  newdata=Census.Test[Census.Test$Outer==TRUE,], allow.new.levels=TRUE )
+plot(Census.Test$LogitTarg, Census.Test$Pred)
+abline(0,1, lty=2)
+
+# Try again with two-stage modeling. 
