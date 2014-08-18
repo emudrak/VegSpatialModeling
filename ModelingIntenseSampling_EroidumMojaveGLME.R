@@ -386,6 +386,60 @@ predict(hurdle6.lme, Census.Test, allow.new.levels=TRUE)
 #Not stochastic, uses population level data for previously unobserved levels
 plot(INVlogit.transform(predict(hurdle6.lme, Census.Test, allow.new.levels=TRUE)), jitter(Census.Test$TargPres), xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
 #That looks pretty good
+#Plot as distance from shrub
+Stg1Model=data.frame(t(fixed.effects(hurdle6.lme)))
+
+col=watercols[SampleShrub$Rain[i]]
+col=firecols[SampleShrub$Fire[i]]
+col=dircols[SampleShrub$TranDir[i]]
+
+ltys=c(1,5)
+
+plot(c(0, 260), c(0,1), pch=NA, xlab="Distance from Shrub (cm)", ylab="P(plant present)")
+
+for (i in 1:nrow(SampleShrub)){
+    new.x=seq(0,260, by=20)
+    #Stage 1- 
+   logitp=Stg1Model$X.Intercept. + Stg1Model$RainD*SampleShrub$RainDummy[i]+Stg1Model$PlotDist*new.x + Stg1Model$TranDirS*SampleShrub$TranDirDummy[i]+ Stg1Model$I.PlotDist.2.*(new.x^2)+ Stg1Model$FireUB*SampleShrub$FireDummy[i] + Stg1Model$PlotDist.TranDirS*SampleShrub$TranDirDummy[i]*new.x+ Stg1Model$TranDirS.I.PlotDist.2.*SampleShrub$TranDirDummy[i]*(new.x^2)+ Stg1Model$PlotDist.FireUB*SampleShrub$FireDummy[i]*new.x+ Stg1Model$I.PlotDist.2..FireUB*SampleShrub$FireDummy[i]*(new.x^2)
+    
+    p=INVlogit.transform(logitp)
+    lines(new.x, p, col=watercols[SampleShrub$Rain[i]], lty=ltys[SampleShrub$Fire[i]], lwd=3)
+}
+legend(100, 0.6, c("Ambient", "Drought"), col=watercols, lty=1, lwd=3)
+legend(100, 0.4, c("Unburned", "Burned"), col="gray50", lty=c(1,2), lwd=3)
+
+#Eekk!  But it didn't include size. try with size: 
+
+sizehurdle.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2) + Area_Bot:Fire + Area_Bot:Rain + Area_Bot:Rain + Area_Bot:PlotDist+ Area_Bot:I(PlotDist^2) + 
+        Fire:Rain + Fire:TranDir+ Fire:PlotDist + Fire:I(PlotDist^2) + 
+             Rain:PlotDist + Rain:I(PlotDist^2) + 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle.lme)
+
+sizehurdle2.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2) + Area_Bot:Fire + Area_Bot:Rain + Area_Bot:Rain + Area_Bot:PlotDist+ Area_Bot:I(PlotDist^2) + 
+        Fire:Rain + Fire:TranDir+ Fire:PlotDist + Fire:I(PlotDist^2)+ 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle2.lme)
+
+sizehurdle3.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2) + Area_Bot:Fire + Area_Bot:Rain + Area_Bot:PlotDist+ Area_Bot:I(PlotDist^2) + 
+ Fire:PlotDist + Fire:I(PlotDist^2)+ 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle3.lme)
+
+sizehurdle4.lme=glmer(TargPres~Area_Bot + Fire + Rain + TranDir + PlotDist + I(PlotDist^2)+  Fire:PlotDist + Fire:I(PlotDist^2)+ 
+             TranDir:PlotDist + TranDir:I(PlotDist^2) + 
+        #No Dir/Rain interxn- no south shelters!
+                 + (1|Shrub), family=binomial, data=Census.Train)
+summary(sizehurdle4.lme)
+
+#AreaBot not significant.....
+
 
 # Look at presence only crosstabs -------
 
