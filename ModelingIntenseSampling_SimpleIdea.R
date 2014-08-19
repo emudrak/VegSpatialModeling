@@ -8,8 +8,8 @@ setwd("C:/Users/elm26/Documents/SERDPproject")
 setwd("C:/Users/Erika/Documents/Research_ISU/SERDP")
 #source("SoilProbeSampling/CompassFunctions")
 #source("SoilProbeSampling/RasterGeometry")
-source("SoilProbeSampling/ApplyModelFunctions.R")
-source("VegSpatialModeling/PlotTransectGraphs.R")
+#source("SoilProbeSampling/ApplyModelFunctions.R")
+#source("VegSpatialModeling/PlotTransectGraphs.R")
 
 qlogis(seq(0,1,by=0.1))
 
@@ -162,7 +162,7 @@ yplotmax=max(Census.Train[,TargSpec])
 
 #Plot With transformed response:##################################
 
-yplotmax=max(Census.Train$LogitTarg)
+#yplotmax=max(Census.Train$LogitTarg)
 hist(Census.Train$LogitTarg)
 
 windows(7,10)
@@ -359,3 +359,84 @@ plot(Census.Test$LogitTarg, Census.Test$Pred)
 abline(0,1, lty=2)
 
 # Try again with two-stage modeling. 
+
+
+
+# presence/absense crosstabs ------
+xtabs(~TargPres+MHcode+Rain+Fire+TranDir, data=Census.Train[Census.Train$Outer==TRUE,])
+xtabs(~TargPres+Rain+Fire+TranDir, data=Census.Train)
+xtabs(~Rain+Fire+TranDir, data=Census.Train)
+xtabs(~TargPres+TranDir, data=Census.Train)
+xtabs(~TargPres+Rain, data=Census.Train)
+xtabs(~TargPres+Fire, data=Census.Train)
+
+# Logistic modeling -----
+
+hurdle.lme=glmer(TargPres~PlotDist*Area_Bot*Fire*Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle.lme)
+
+
+
+hurdle2.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^3 + (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle2.lme)
+drop1(hurdle2.lme)
+
+
+hurdle3.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2+PlotDist:Area_Bot:Rain+PlotDist:Area_Bot:Fire+PlotDist:Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle3.lme)
+drop1(hurdle3.lme)
+
+
+hurdle4.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2+PlotDist:Area_Bot:Fire+PlotDist:Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle4.lme)
+drop1(hurdle4.lme)
+
+
+hurdle5.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2+PlotDist:Area_Bot:Fire+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle5.lme)
+drop1(hurdle5.lme)
+
+hurdle6.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle6.lme)
+drop1(hurdle6.lme)
+
+hurdle7.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Fire+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle7.lme)
+drop1(hurdle7.lme)
+
+hurdle8.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Fire-Area_Bot:Fire+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle8.lme)
+drop1(hurdle8.lme)
+
+
+hurdle9.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Fire-Area_Bot:Fire-PlotDist:Rain+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle9.lme)
+drop1(hurdle9.lme)
+
+
+
+hurdle10.lme=glmer(TargPres~PlotDist+Area_Bot+Fire+Rain+PlotDist:Area_Bot+Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle10.lme)
+drop1(hurdle10.lme)
+
+
+hurdle11.lme=glmer(TargPres~PlotDist+Area_Bot+Fire+Rain+PlotDist:Area_Bot+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle11.lme)
+drop1(hurdle11.lme)
+
+hurdle12.lme=glmer(TargPres~PlotDist+Area_Bot+Rain+PlotDist:Area_Bot+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$Outer==TRUE,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle12.lme)
+drop1(hurdle12.lme)
+#Go with this one for now???
+
+coef(hurdle12.lme)
+fixed.effects(hurdle12.lme)
+
+INVlogit.transform(fixed.effects(hurdle12.lme))
+
+predict(hurdle12.lme, Census.Test, allow.new.levels=TRUE)  
+#Not stochastic, uses population level data for previously unobserved levels
+Census.Test$HurdPred=NA
+Census.Test[Census.Test$Outer==TRUE,"HurdPred"]=predict(hurdle12.lme,  newdata=Census.Test[Census.Test$Outer==TRUE,], allow.new.levels=TRUE )
+
+plot(jitter(TargPres,factor=0.2)~INVlogit.transform(HurdPred), data=Census.Test[Census.Test$Outer==TRUE,], xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
