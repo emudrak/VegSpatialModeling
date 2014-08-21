@@ -158,101 +158,101 @@ yplotmax=max(Census.Train[,TargSpec])
 # #Ugh still looks zero inflated.  That is not worth it. 
 
 
-
-
-#Plot With transformed response:##################################
-
-#yplotmax=max(Census.Train$LogitTarg)
-hist(Census.Train$LogitTarg)
-
-windows(7,10)
-par(mfrow=c(3,1))
-#With Fire Colors
-with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber   
-  myburn=Census.Train$Fire[Census.Train$Shrub==i][1]  
-  lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
-        Census.Train$LogitTarg[Census.Train$Shrub==i],   
-        pch=20,lwd=2, type="o", lty=1,
-        col=firecols[myburn]
-        
-  )
-  print(i)
-  print(myburn)
-} # end of i loop
-legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=firecols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
-
-#With Rain Colors
-with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
-  mywater=Census.Train$Rain[Census.Train$Shrub==i][1]  
-  lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
-        Census.Train$LogitTarg[Census.Train$Shrub==i],   
-        pch=20,lwd=2, type="o", lty=1,
-        col=watercols[mywater]
-  )
-} # end of i loop
-legend(200,0.90* yplotmax, levels(Census.Train$Rain), col=watercols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
-
-#With Direction Colors
-with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
-  mydir=Census.Train$TranDir[Census.Train$Shrub==i][1]
-  lines(Census.Train$PlotDist[Census.Train$Shrub==i],
-        Census.Train$LogitTarg[Census.Train$Shrub==i], 
-        pch=20,lwd=2, type="o", lty=1,
-        col=dircols[mydir]
-  )
-} # end of i loop
-legend(200,0.90* yplotmax, levels(Census.Train$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
-
-
-#Plot With % cover response:##################################
-
-yplotmax=max(Census.Train$Target)
-hist(Census.Train$Target)
-windows(7,10)
-par(mfrow=c(3,1))
-#With Fire Colors
-with(Census.Train, plot(c(1,xplotmax), range(Census.Train$Target/100) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("% Cover", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber   
-  myburn=Census.Train$Fire[Census.Train$Shrub==i][1]  
-  lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
-        Census.Train$Target[Census.Train$Shrub==i]/100,   
-        pch=20,lwd=2, type="o", lty=1,
-        col=firecols[myburn]
-        
-  )
-  print(i)
-  print(myburn)
-} # end of i loop
-legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=firecols, lwd=2, lty=1, bty="n")      #IF a 2012 Census.Train
-
-#With Rain Colors
-with(Census.Train, plot(c(1,xplotmax), range(Census.Train$Target/100) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=ylabel, xlab="Distance from Shrub Stem" ))
-for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
-  mywater=Census.Train$Rain[Census.Train$Shrub==i][1]  
-  lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
-        Census.Train$Target[Census.Train$Shrub==i]/100,   
-        pch=20,lwd=2, type="o", lty=1,
-        col=watercols[mywater]
-  )
-} # end of i loop
-legend(200,0.90* yplotmax, levels(Census.Train$Rain), col=watercols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
-
-#With Direction Colors
-with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
-  mydir=Census.Train$TranDir[Census.Train$Shrub==i][1]
-  lines(Census.Train$PlotDist[Census.Train$Shrub==i],
-        Census.Train$LogitTarg[Census.Train$Shrub==i], 
-        pch=20,lwd=2, type="o", lty=1,
-        col=dircols[mydir]
-  )
-} # end of i loop
-legend(200,0.90* yplotmax, levels(Census.Train$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
-
-     
+# 
+# 
+# #Plot With transformed response:##################################
+# 
+# #yplotmax=max(Census.Train$LogitTarg)
+# hist(Census.Train$LogitTarg)
+# 
+# windows(7,10)
+# par(mfrow=c(3,1))
+# #With Fire Colors
+# with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
+# for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber   
+#   myburn=Census.Train$Fire[Census.Train$Shrub==i][1]  
+#   lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
+#         Census.Train$LogitTarg[Census.Train$Shrub==i],   
+#         pch=20,lwd=2, type="o", lty=1,
+#         col=firecols[myburn]
+#         
+#   )
+#   print(i)
+#   print(myburn)
+# } # end of i loop
+# legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=firecols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+# 
+# #With Rain Colors
+# with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
+# for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
+#   mywater=Census.Train$Rain[Census.Train$Shrub==i][1]  
+#   lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
+#         Census.Train$LogitTarg[Census.Train$Shrub==i],   
+#         pch=20,lwd=2, type="o", lty=1,
+#         col=watercols[mywater]
+#   )
+# } # end of i loop
+# legend(200,0.90* yplotmax, levels(Census.Train$Rain), col=watercols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+# 
+# #With Direction Colors
+# with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
+# for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
+#   mydir=Census.Train$TranDir[Census.Train$Shrub==i][1]
+#   lines(Census.Train$PlotDist[Census.Train$Shrub==i],
+#         Census.Train$LogitTarg[Census.Train$Shrub==i], 
+#         pch=20,lwd=2, type="o", lty=1,
+#         col=dircols[mydir]
+#   )
+# } # end of i loop
+# legend(200,0.90* yplotmax, levels(Census.Train$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+# 
+# 
+# #Plot With % cover response:##################################
+# 
+# yplotmax=max(Census.Train$Target)
+# hist(Census.Train$Target)
+# windows(7,10)
+# par(mfrow=c(3,1))
+# #With Fire Colors
+# with(Census.Train, plot(c(1,xplotmax), range(Census.Train$Target/100) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("% Cover", ylabel), xlab="Distance from Shrub Stem" ))
+# for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber   
+#   myburn=Census.Train$Fire[Census.Train$Shrub==i][1]  
+#   lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
+#         Census.Train$Target[Census.Train$Shrub==i]/100,   
+#         pch=20,lwd=2, type="o", lty=1,
+#         col=firecols[myburn]
+#         
+#   )
+#   print(i)
+#   print(myburn)
+# } # end of i loop
+# legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=firecols, lwd=2, lty=1, bty="n")      #IF a 2012 Census.Train
+# 
+# #With Rain Colors
+# with(Census.Train, plot(c(1,xplotmax), range(Census.Train$Target/100) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=ylabel, xlab="Distance from Shrub Stem" ))
+# for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
+#   mywater=Census.Train$Rain[Census.Train$Shrub==i][1]  
+#   lines(Census.Train$PlotDist[(Census.Train$Shrub==i)],
+#         Census.Train$Target[Census.Train$Shrub==i]/100,   
+#         pch=20,lwd=2, type="o", lty=1,
+#         col=watercols[mywater]
+#   )
+# } # end of i loop
+# legend(200,0.90* yplotmax, levels(Census.Train$Rain), col=watercols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+# 
+# #With Direction Colors
+# with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
+# for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
+#   mydir=Census.Train$TranDir[Census.Train$Shrub==i][1]
+#   lines(Census.Train$PlotDist[Census.Train$Shrub==i],
+#         Census.Train$LogitTarg[Census.Train$Shrub==i], 
+#         pch=20,lwd=2, type="o", lty=1,
+#         col=dircols[mydir]
+#   )
+# } # end of i loop
+# legend(200,0.90* yplotmax, levels(Census.Train$TranDir), col=dircols, lwd=2, lty=1, bty="n")  	#IF a 2012 Census.Train
+# 
+#      
 #---------------------------------------------------------------------------------------------
 
 # Try a simple linear decreasing model using only values from Canopy dripline
@@ -270,7 +270,7 @@ Census.Train[Census.Train$Shrub==3,]
 # Show only plots outside Canopy Dripline
 Census.Train$Outer=Census.Train$PlotDist>Census.Train$Dripline
 
-yplotmax=max(Census.Train$LogitTarg)
+
 hist(Census.Train$LogitTarg)
 
 Train.Outer=Census.Train[Census.Train$Outer==TRUE,]
