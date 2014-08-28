@@ -6,23 +6,16 @@ library(devtools)
 install_github("elmR", "emudrak")
 library(elmR)
 
-#source("SoilProbeSampling/CompassFunctions")
-#source("SoilProbeSampling/RasterGeometry")
-#source("SoilProbeSampling/ApplyModelFunctions.R")
-#source("VegSpatialModeling/PlotTransectGraphs.R")
-
 # must include transformation functions
 # logit
 # inv_logit
 # logw0
-
 
 #Read in and munge data -----------------
 # PICK A DESERT
 #DESERT="Sonoran"
 DESERT="Mojave"
 YEAR="2013Xtra"
-
 
 if((DESERT=="Mojave") & (YEAR=="2013Xtra")){
   CensusData=read.csv("../Mojave2013Intense24Shrubs.csv", blank.lines.skip=TRUE)
