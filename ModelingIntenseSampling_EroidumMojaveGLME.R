@@ -359,9 +359,6 @@ summary(hurdle4.lme)
 
 
 
-#Try adding Area_Bot
-
-
 hurdle5.lme=glmer(TargPres~Rain*PlotDist
                   +TranDir*PlotDist+TranDir*I(PlotDist^2)
                   +Fire*PlotDist+Fire*I(PlotDist^2)
