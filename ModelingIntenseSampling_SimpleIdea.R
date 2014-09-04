@@ -388,7 +388,7 @@ Census.Test$PresOnlyPred=NA
 Census.Test[Census.Test$MHcode>1,"PresOnlyPred"]=predict(hurdle6.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
 
 plot(jitter(TargPres,factor=0.2)~inv_logit(HurdPred), data=Census.Test[Census.Test$MHcode>1,], xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
-=======
+
 linmod10.lme=lmer(LogitTarg ~ PlotDist + Area_Bot + Fire + Rain + PlotDist:Area_Bot + Area_Bot:Fire + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
 summary(linmod10.lme)
 drop1(linmod10.lme, test="Chisq")
