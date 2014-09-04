@@ -171,22 +171,6 @@ legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=thesecols, lwd=2, lty=
 
 
 
-
-
-windows(7,10)
-par(mfrow=c(3,1))
-with(Train.Outer, plot(c(1,xplotmax), range(Train.Outer$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Train.Outer$Shrub)) {  # i=ShrubNumber   
-  myburn=Train.Outer$Fire[Train.Outer$Shrub==i][1]  
-  lines(Train.Outer$PlotDist[(Train.Outer$Shrub==i)],
-        Train.Outer$LogitTarg[Train.Outer$Shrub==i],   
-        pch=20,lwd=2, type="o", lty=1,
-        col=firecols[myburn]
-        
-  )
-} # end of i loop
-legend(200,0.90* yplotmax, levels(Train.Outer$Fire), col=firecols, lwd=2, lty=1, bty="n")      #IF a 2012 Train.Outer
-
 library(lme4)
 library(lmerTest)
 
@@ -267,7 +251,8 @@ abline(0,1, lty=2)
 
 
 # Try again with two-stage modeling------------ 
-
+library(lme4)
+library(lmerTest)
 
 
 # presence/absense crosstabs ------
@@ -365,64 +350,28 @@ drop1(linmod8.lme)
 linmod9.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Rain-PlotDist:Fire+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
 summary(linmod9.lme)
 drop1(linmod9.lme)
-
-
-linmod9.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Rain-PlotDist:Fire+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod9.lme)
-drop1(linmod9.lme)
-
-
-plot(linmod15.lme)
-qqnorm(resid(linmod15.lme))
+plot(linmod9.lme)
+qqnorm(resid(linmod9.lme))
 abline(c(0,1))
+hist(resid(linmod9.lme), breaks=40, freq=F)
+curve(dnorm(x, mean=mean(resid(linmod9.lme)), sd=sd(resid(linmod9.lme))), add=TRUE)
 #Go with this one for now???
 
-coef(linmod15.lme)
-fixef(linmod15.lme)
+coef(linmod9.lme)
+fixef(linmod9.lme)
 
-inv_logit(fixef(linmod15.lme))
-
-predict(linmod15.lme, Census.Test, allow.new.levels=TRUE)  
-#Not stochastic, uses population level data for previously unobserved levels
-Census.Test$PresOnlyPred=NA
-Census.Test[Census.Test$MHcode>1,"PresOnlyPred"]=predict(hurdle6.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
-
-plot(jitter(TargPres,factor=0.2)~inv_logit(HurdPred), data=Census.Test[Census.Test$MHcode>1,], xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
-
-linmod10.lme=lmer(LogitTarg ~ PlotDist + Area_Bot + Fire + Rain + PlotDist:Area_Bot + Area_Bot:Fire + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
-summary(linmod10.lme)
-drop1(linmod10.lme, test="Chisq")
-
-linmod11.lme=lmer(LogitTarg ~ PlotDist + Area_Bot + Fire + Rain + PlotDist:Area_Bot + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
-summary(linmod11.lme)
-drop1(linmod11.lme, test="Chisq")
-
-linmod12.lme=lmer(LogitTarg ~ PlotDist + Area_Bot + Fire + Rain + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
-summary(linmod12.lme)
-drop1(linmod12.lme, test="Chisq")
-
-linmod13.lme=lmer(LogitTarg ~ PlotDist + Fire + Rain + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
-summary(linmod13.lme)
-drop1(linmod13.lme, test="Chisq")
-
-linmod14.lme=lmer(LogitTarg ~ Fire + Rain + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
-summary(linmod14.lme)
-drop1(linmod14.lme, test="Chisq")
-## FINAL - overly simple?  or easier because positive effect of PlotDist is weird?
-
-
+inv_logit(fixef(linmod9.lme))
 
 
 #Try on Testing Data
-Census.Test$Pred=NA
-Census.Test[Census.Test$MHcode>1,"Pred"]=predict(linmod14.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
+predict(linmod9.lme, Census.Test, allow.new.levels=TRUE)  
+#Not stochastic, uses population level data for previously unobserved levels
+
+Census.Test$PresOnlyPred=NA
+Census.Test[Census.Test$MHcode>1 & Census.Test$Target>0,"PresOnlyPred"]=predict(linmod9.lme,  newdata=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], allow.new.levels=TRUE )
 
 
-plot(inv_logit(Census.Test$LogitTarg), inv_logit(Census.Test$Pred))
-#something is seriously wrong....
 
-abline(0,1, lty=2)
-
-
+plot(Target/100~inv_logit(PresOnlyPred), data=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], xlab="Predicted Percent Cover", ylab="Observed percent Cover" ) 
 
 
