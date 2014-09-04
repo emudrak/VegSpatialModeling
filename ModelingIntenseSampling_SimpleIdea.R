@@ -16,7 +16,7 @@ library(elmR)
 #DESERT="Sonoran"
 DESERT="Mojave"
 YEAR="2013Xtra"
-#.
+
 if((DESERT=="Mojave") & (YEAR=="2013Xtra")){
   CensusData=read.csv("../Mojave2013Intense24Shrubs.csv", blank.lines.skip=TRUE)
   CensusData$Invasives=CensusData$Erodium+CensusData$Schismus+CensusData$Bromus
@@ -224,7 +224,6 @@ linmod8.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2-Area_Bot:Rain - Fire:
 summary(linmod8.lme)
 drop1(linmod8.lme, test="Chisq")
 
-
 linmod9.lme=lmer(LogitTarg~PlotDist + Area_Bot + Fire + Rain + PlotDist:Area_Bot+PlotDist:Fire+Area_Bot:Fire + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
 summary(linmod9.lme)
 drop1(linmod9.lme, test="Chisq")
@@ -349,10 +348,6 @@ linmod5.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^3-PlotDist:Rain-PlotDis
 summary(linmod5.lme)
 drop1(linmod5.lme)
 
-linmod6.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2+Area_Bot:Fire:Rain+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod6.lme)
-drop1(linmod6.lme)
-
 
 linmod6.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2+Area_Bot:Fire:Rain+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
 summary(linmod6.lme)
@@ -393,3 +388,41 @@ Census.Test$PresOnlyPred=NA
 Census.Test[Census.Test$MHcode>1,"PresOnlyPred"]=predict(hurdle6.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
 
 plot(jitter(TargPres,factor=0.2)~inv_logit(HurdPred), data=Census.Test[Census.Test$MHcode>1,], xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
+=======
+linmod10.lme=lmer(LogitTarg ~ PlotDist + Area_Bot + Fire + Rain + PlotDist:Area_Bot + Area_Bot:Fire + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
+summary(linmod10.lme)
+drop1(linmod10.lme, test="Chisq")
+
+linmod11.lme=lmer(LogitTarg ~ PlotDist + Area_Bot + Fire + Rain + PlotDist:Area_Bot + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
+summary(linmod11.lme)
+drop1(linmod11.lme, test="Chisq")
+
+linmod12.lme=lmer(LogitTarg ~ PlotDist + Area_Bot + Fire + Rain + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
+summary(linmod12.lme)
+drop1(linmod12.lme, test="Chisq")
+
+linmod13.lme=lmer(LogitTarg ~ PlotDist + Fire + Rain + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
+summary(linmod13.lme)
+drop1(linmod13.lme, test="Chisq")
+
+linmod14.lme=lmer(LogitTarg ~ Fire + Rain + (1|Shrub), data=Census.Train[Census.Train$MHcode>1,])
+summary(linmod14.lme)
+drop1(linmod14.lme, test="Chisq")
+## FINAL - overly simple?  or easier because positive effect of PlotDist is weird?
+
+
+
+
+#Try on Testing Data
+Census.Test$Pred=NA
+Census.Test[Census.Test$MHcode>1,"Pred"]=predict(linmod14.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
+
+
+plot(inv_logit(Census.Test$LogitTarg), inv_logit(Census.Test$Pred))
+#something is seriously wrong....
+
+abline(0,1, lty=2)
+
+
+
+
