@@ -69,30 +69,12 @@ table(Census.Test[c("Fire", "Rain", "TranDir")])
 Census.Train=Census[!(Census$Shrub %in% TestShrubs),]
 table(Census.Train[c("Fire", "Rain", "TranDir")])
 
-
-# Consider dropping all drought treatment-----
-# ... to get rid of many zero values. 
-with(subset(Census.Train, Rain=="A"), hist(log(Target/100+1), breaks= 40, xlab=ylabel, main="Ambient, Log(x+1)"))
-with(subset(Census.Train, Rain=="A"),hist(asin(sqrt(Target/100))*2/pi, breaks= 40, xlab=ylabel, main="Ambient, Arcsin(sqrt(x))*2/pi"))
-with(subset(Census.Train, Rain=="A"),hist(logit(Target/100), breaks= 40, xlab=ylabel, main="Ambient, Emperical Logit (Dixon)"))
-
-with(subset(Census.Train, Rain=="D"), hist(log(Target/100+1), breaks= 40, xlab=ylabel, main="Drought, Log(x+1)"))
-with(subset(Census.Train, Rain=="D"),hist(asin(sqrt(Target/100))*2/pi, breaks= 40, xlab=ylabel, main="Drought, Arcsin(sqrt(x))*2/pi"))
-with(subset(Census.Train, Rain=="D"),hist(logit(Target/100), breaks= 40, xlab=ylabel, main="Drought, Emperical Logit (Dixon)"))
-
-#Ugh still looks zero inflated.  That is not worth it. 
-
-
 #Plot With transformed response:##################################
 
 # Setup for elaborate plotting 
-colorset=sample(rainbow(168))
 firecols=c("gray40", "green")
 watercols=c("lightblue", "tan")
 dircols=c("red","blue")
-firepch=c(16,1)
-dirwds=c(1,2)
-
 
 #Set scale ranges for this target
 xplotmax=max(Census.Train[,"PlotDist"], na.rm=TRUE)
@@ -124,12 +106,8 @@ legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=thesecols, lwd=2, lty=
 
 # 
 # #Plot With % cover response:##################################
-
-
 #Set scale ranges for this target
-xplotmax=max(Census.Train[,"PlotDist"], na.rm=TRUE)
 yplotmax=max(Census.Train[,"Target"])
-hist(Census.Train$Target)
 
 plotscheme="fire"
 plotscheme="rain"
@@ -236,7 +214,7 @@ drop1(linmod14.lme, test="Chisq")
 
 
 
-#Try on Testing Data
+#Try on Testing Data-----
 Census.Test$Pred=NA
 Census.Test[Census.Test$MHcode>1,"Pred"]=predict(linmod14.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
 
@@ -291,19 +269,34 @@ drop1(hurdle5.lme)
 
 hurdle6.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Area_Bot+PlotDist:Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 summary(hurdle6.lme)
-drop1(hurdle6.lme)
+drop1(hurdle6.lme, test="Chisq")
+
+
+hurdle7.lme=glmer(TargPres~PlotDist+Area_Bot+Fire+Rain+PlotDist:Fire+ PlotDist:Rain +Area_Bot:Rain+Fire:Rain+ PlotDist:Fire:Rain+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle7.lme)
+drop1(hurdle7.lme, test="Chisq")
+
+
+hurdle8.lme=glmer(TargPres~PlotDist+Area_Bot+Fire+Rain+PlotDist:Fire+ PlotDist:Rain +Fire:Rain+ PlotDist:Fire:Rain+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle8.lme)
+drop1(hurdle8.lme, test="Chisq")
+
+
+hurdle9.lme=glmer(TargPres~PlotDist+Fire+Rain+PlotDist:Fire+ PlotDist:Rain +Fire:Rain+ PlotDist:Fire:Rain+ (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+summary(hurdle9.lme)
+drop1(hurdle9.lme, test="Chisq")
 
 #Go with this one for now???
 
-coef(hurdle6.lme)
-fixef(hurdle6.lme)
+coef(hurdle9.lme)
+fixef(hurdle9.lme)
 
-inv_logit(fixef(hurdle6.lme))
+inv_logit(fixef(hurdle9.lme))
 
-predict(hurdle6.lme, Census.Test, allow.new.levels=TRUE)  
+predict(hurdle9.lme, Census.Test, allow.new.levels=TRUE)  
 #Not stochastic, uses population level data for previously unobserved levels
 Census.Test$HurdPred=NA
-Census.Test[Census.Test$MHcode>1,"HurdPred"]=predict(hurdle6.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
+Census.Test[Census.Test$MHcode>1,"HurdPred"]=predict(hurdle9.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
 
 plot(jitter(TargPres,factor=0.2)~inv_logit(HurdPred), data=Census.Test[Census.Test$MHcode>1,], xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
 
