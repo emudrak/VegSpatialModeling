@@ -79,6 +79,8 @@ TargSpec="ErodCover"; ylabel="% Cover"
 Census$Target=round(Census[,TargSpec]) #Round to deal with issue of 0.1 percent cover values
 Census$LogitTarg=logit(Census$Target/100)
 Census$TargPres=ceiling(Census$Target/100) #Make a new binary variable showing zero or not
+
+write.csv(mean(Census$Target[Census$MHcode==4])/100, file="Interspace.csv", row.names=F)
 ```
 
 
@@ -117,6 +119,8 @@ with(Census.Train, hist(logw0(Target/100), breaks= 40, xlab=paste("log ", ylabel
 
 with(Census.Train,hist(logit(Target/100), breaks= 40, xlab=paste("logit ",ylabel), main=NA))
 
+mean(CensusData$ErodCover[CensusData$MHcode>=3])
+
 
 ```
 
@@ -143,17 +147,17 @@ firecols=c("gray40", "green")
 watercols=c("lightblue", "tan")
 dircols=c("red","blue")
 firepch=c(16,1)
-dirwds=c(1,2)
 
 
 #Set scale ranges for this target
 xplotmax=max(Census.Train[,"PlotDist"], na.rm=TRUE)
+xplotmax=max(Census.Train[,"MHcode"], na.rm=TRUE)
 yplotmax=max(Census.Train[,"LogitTarg"])
 
 
-plotscheme="fire"
+# plotscheme="fire"
 plotscheme="rain"
-plotscheme="direction"
+# plotscheme="direction"
 
 with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
 for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
@@ -161,11 +165,20 @@ for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
     if (plotscheme=="fire") mycol=firecols[theseplots$Fire[1] ] else    
     if (plotscheme=="rain") mycol=watercols[theseplots$Rain[1] ]    else
     if (plotscheme=="direction") mycol=dircols[theseplots$TranDir[1] ]
-  lines(theseplots$PlotDist, theseplots$LogitTarg,   
+#   lines(theseplots$PlotDist, theseplots$LogitTarg,   
+    lines(theseplots$MHcode, theseplots$LogitTarg,        
         pch=20,lwd=2, type="o", lty=1,
         col=mycol  )
 } # end of i loop
-if (plotscheme=="fire") thesecols=firecols else if (plotscheme=="rain")  thesecols=watercols else if (plotscheme=="direction") thesecols=dircols   
+if (plotscheme=="fire"){
+    thesecols=firecols; names=levels(Census.Train$Fire)
+    }else 
+if (plotscheme=="rain"){
+      thesecols=watercols ; names=levels(Census.Train$Rain)
+    }else 
+if (plotscheme=="direction"){
+      thesecols=dircols; names=levels(Census.Train$TranDir)  
+    }
 legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=thesecols, lwd=2, lty=1, bty="n") 
 
 ```
@@ -348,6 +361,23 @@ Census.Test[Census.Test$MHcode>1 & Census.Test$Target>0,"PresOnlyPred"]=predict(
 plot(Target/100~inv_logit(PresOnlyPred), data=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], xlab="Predicted Percent Cover", ylab="Observed percent Cover" ) 
 abline(0,1, lty=2)
 
+
+
 ```
 
 Not Great.
+
+```{r Save models, echo=FALSE, message=FALSE, results='hide'}
+GoodPresenceModel=as.data.frame(t(fixef(hurdle12.lme)))
+names(GoodPresenceModel)[1]="Int"
+names(GoodPresenceModel)[which(names(GoodPresenceModel)=="PlotDist:TranDirS")]="Dist.DirS"
+write.csv(as.data.frame(t(fixef(hurdle12.lme))), "ErodPresenceModel.csv", row.names=F)
+GoodCoverModel=as.data.frame(t(fixef(linmod9.lme)))
+names(GoodCoverModel)[1]="Int"
+names(GoodCoverModel)[which(names(GoodCoverModel)=="PlotDist:Area_Bot")]="Dist.Area"
+names(GoodCoverModel)[which(names(GoodCoverModel)=="Area_Bot:FireUB")]="Area.FireUB"
+write.csv(GoodCoverModel, "ErodCoverModel.csv", row.names=F)
+        
+
+```
+
