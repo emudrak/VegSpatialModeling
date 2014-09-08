@@ -76,13 +76,11 @@ PredCov=matrix(data=.20,
       for (j in ylist ){
         me=data.frame(Easting=BlankImage.im$xcol[i],Northing=BlankImage.im$yrow[j])
         thisdist=dist(rbind(me,thisShrub[c("Easting","Northing")]))
-
         ProbN=inv_logit(PresModel$"(Intercept)" +PresModel$PlotDist*thisdist +PresModel$Rain*(thisShrub$Rain=="D"))
         ProbS=inv_logit(PresModel$"(Intercept)" +PresModel$PlotDist*thisdist +PresModel$Rain*(thisShrub$Rain=="D") +PresModel$TranDirS + PresModel$"PlotDist:TranDirS"*thisdist)
         CalcCov=inv_logit(CovModel$"(Intercept)"+CovModel$PlotDist*thisdist + CovModel$Area_Bot*thisShrub$Area_Bot+CovModel$FireUB*(thisShrub$Fire=="UB")-CovModel$RainD*(thisShrub$Rain=="D")+CovModel$"PlotDist:Area_Bot"*thisShrub$Area_Bot*thisdist + CovModel$"Area_Bot:FireUB"*thisShrub$Area_Bot*(thisShrub$Fire=="UB"))
-        if (thisdist< thisShrubRad) { # Point is within shrub radius pixel is under shrub
+        if (thisdist< thisShrubRad) { # Point is within shrub radius so is under shrub
           Cov=1  
-          #print("Shrub")
         }else
         if (thisdist < thisShrubRad+ thisShrub$Range){  #within range 
           angle=LineAngle(thisShrub$"Easting",thisShrub$"Northing",
@@ -90,18 +88,16 @@ PredCov=matrix(data=.20,
           if(is.na(angle)) { #shrub is on this cell 
             Prob=mean(ProbN, ProbS) 
           } else{  	
-          if(angle>180) angle=angle-2*(angle-180)   #Reflect across y=axis, scale from 0 to 180
+          if(angle>180) angle=angle-2*(angle-180) #Reflect across y=axis, scale  0- 180
             Prob=(angle/180)*ProbS+(1-angle/180)*ProbN #Weighted avg
           } #end angle check
-
           Pres=rbinom(1,1,prob=Prob)
          # print(Pres)
           Cov=CalcCov*Pres # add rand effects? +rnorm(1,0,Model$SIGMA)
           #If this shrub's influence is higher than current value, replace the value
           #if(PredCov[j,i]<Cov) 
-            PredCov[j,i]=Cov    
           } #end thisdist check
-        
+        PredCov[j,i]=Cov  
       }# end j loop
     }# end i loop
     setTxtProgressBar(pb, k)
@@ -112,8 +108,8 @@ PredCov=matrix(data=.20,
 PredCov.im=im(PredCov, xcol=BlankImage.im$xcol,yrow=BlankImage.im$yrow)
 
 
-plot(PredCov.im, col=gray(0:100/100))
+plot(PredCov.im, col=gray(100:0/100))
   
   return(list(image=PredNut.im, table=SampleShrub))
   
-} # End ApplyLinearModel
+} # End ApplyHurdleModel
