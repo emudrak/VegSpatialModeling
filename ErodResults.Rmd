@@ -36,7 +36,7 @@ logw0=function (x)
 }
 # end (mini) package  -----
 
-setwd("C:/Users/elm26/Documents/SERDPproject/VegSpatialModeling/VegSpatialModeling")
+#setwd("C:/Users/elm26/Documents/SERDPproject/VegSpatialModeling/VegSpatialModeling")
 ```
 
 
@@ -107,11 +107,11 @@ Census.Train=Census[!(Census$Shrub %in% TestShrubs),]
 ```
 
 
-This time using `TargSpec`
+This time using `r TargSpec`
 
 Response seems to be zero-inflated
 
-```{r ExplorDatAnalysis, echo=FALSE, fig.height=2}
+```{r ExplorDatAnalysis, echo=FALSE, fig.height=3}
 par(mfrow=c(1,2))
 with(Census.Train, hist(logw0(Target/100), breaks= 40, xlab=paste("log ", ylabel), main=NA))
 
@@ -120,9 +120,9 @@ with(Census.Train,hist(logit(Target/100), breaks= 40, xlab=paste("logit ",ylabel
 
 ```
 
-Drop drought treatment?
+Will dropping the drought treatment fix the zero-inflation problem?
 
-```{r drop drought, echo=FALSE, fig.width=6, fig.height=4}
+```{r drop drought, echo=FALSE, fig.width=6, fig.height=3}
 
 par(mfrow=c(1,2))
 with(subset(Census.Train, Rain=="A"), hist(logw0(Target/100), breaks= 40, xlab=paste("Ambient only, log ", ylabel), main=NA))
@@ -132,7 +132,7 @@ with(subset(Census.Train, Rain=="A"),hist(logit(Target/100), breaks= 40, xlab=pa
 
 ```
 
-Ugh still looks zero inflated.  Work with whole data
+Nope, still looks zero inflated.  Work with whole data, conduct two-stage modeling: Separate processes for if plant presence and cover. 
 
 
 ```{r Plot With transformed response, echo=FALSE}
@@ -171,157 +171,183 @@ legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=thesecols, lwd=2, lty=
 ```
 
 
-# Try two-stage modeling------------ 
+### Hurdle Model------------ 
 First fit "hurdle" model, i.e. a presence/absense model indicating whether the plot has plants or not. 
+Using only plots from Canopy Dripline and outward (i.e. MHCode > 1)
+Model fitting proccess hidden, only final model results shown.
 
-```{r Logistic modeling, echo=FALSE}
+```{r Logistic modeling, echo=FALSE, message=FALSE}
 library(lme4)
 library(lmerTest)
 
 
 #fit model process----
-# hurdle.lme=glmer(TargPres~PlotDist*Area_Bot*Fire*Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
-# summary(hurdle.lme)
+# # 
+# hurdle1.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# summary(hurdle1.lme)
+# drop1(hurdle1.lme, test="Chisq")
 # 
-# 
-# 
-# hurdle2.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^3 + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# hurdle2.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 - PlotDist:Area_Bot  + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 # summary(hurdle2.lme)
-# drop1(hurdle2.lme)
+# drop1(hurdle2.lme, test="Chisq")
 # 
 # 
-# hurdle3.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2+Area_Bot:Fire:Rain+PlotDist:Area_Bot:Fire+PlotDist:Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# hurdle3.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 - PlotDist:Area_Bot - Fire:Rain  + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 # summary(hurdle3.lme)
-# drop1(hurdle3.lme)
+# drop1(hurdle3.lme, test="Chisq")
 # 
-# 
-# hurdle4.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2+Area_Bot:Fire:Rain+PlotDist:Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# hurdle4.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 - PlotDist:Area_Bot - Fire:Rain - Area_Bot:TranDir + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 # summary(hurdle4.lme)
-# drop1(hurdle4.lme)
+# drop1(hurdle4.lme, test="Chisq")
 # 
-# 
-# hurdle5.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Area_Bot+Area_Bot:Fire:Rain+PlotDist:Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# hurdle5.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 - PlotDist:Area_Bot - Fire:Rain - Area_Bot:TranDir - PlotDist:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 # summary(hurdle5.lme)
-# drop1(hurdle5.lme)
+# drop1(hurdle5.lme, test="Chisq")
 # 
-# hurdle6.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Area_Bot+PlotDist:Fire:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# hurdle6.lme=glmer(TargPres~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 - PlotDist:Area_Bot - Fire:Rain - Area_Bot:TranDir - PlotDist:Rain - Rain:TranDir + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 # summary(hurdle6.lme)
 # drop1(hurdle6.lme, test="Chisq")
 # 
-# hurdle7.lme=glmer(TargPres ~ PlotDist+Area_Bot+Fire+Rain + PlotDist:Fire + PlotDist:Rain + Area_Bot:Fire + Fire:Rain + PlotDist:Fire:Rain + (1|Shrub),   family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# hurdle7.lme=glmer(TargPres~ PlotDist+Area_Bot+Fire+Rain+TranDir + PlotDist:Fire +    
+# PlotDist:TranDir + Area_Bot:Rain + Fire:TranDir + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 # summary(hurdle7.lme)
 # drop1(hurdle7.lme, test="Chisq")
 # 
-# hurdle8.lme=glmer(TargPres ~ PlotDist + Area_Bot + Fire + Rain + PlotDist:Fire + PlotDist:Rain + Fire:Rain + PlotDist:Fire:Rain + (1|Shrub),   family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# hurdle7.lme=glmer(TargPres~ PlotDist+Area_Bot+Fire+Rain+TranDir + PlotDist:Fire +    
+# PlotDist:TranDir + Area_Bot:Rain + Fire:TranDir + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# summary(hurdle7.lme)
+# drop1(hurdle7.lme, test="Chisq")
+# 
+# hurdle8.lme=glmer(TargPres~ PlotDist+Area_Bot+Fire+Rain+TranDir + PlotDist:TranDir + Area_Bot:Rain + Fire:TranDir + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 # summary(hurdle8.lme)
 # drop1(hurdle8.lme, test="Chisq")
-# end fit model process----
+# 
+# hurdle9.lme=glmer(TargPres~ PlotDist+Area_Bot+Fire+Rain+TranDir + PlotDist:TranDir + Area_Bot:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# summary(hurdle9.lme)
+# drop1(hurdle9.lme, test="Chisq")
+# 
+# hurdle10.lme=glmer(TargPres~ PlotDist+Area_Bot+Rain+TranDir + PlotDist:TranDir + Area_Bot:Rain + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# summary(hurdle10.lme)
+# drop1(hurdle10.lme, test="Chisq")
+# 
+# hurdle11.lme=glmer(TargPres~ PlotDist+Area_Bot+Rain+TranDir + PlotDist:TranDir + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+# summary(hurdle11.lme)
+# drop1(hurdle11.lme, test="Chisq")
 
-hurdle9.lme=glmer(TargPres ~ PlotDist  + Fire + Rain + PlotDist:Fire + PlotDist:Rain + Fire:Rain + PlotDist:Fire:Rain + (1|Shrub),   family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle9.lme)
-drop1(hurdle9.lme, test="Chisq")
-
-
-hurdle10.lme=glmer(TargPres ~ PlotDist  + Fire + Rain + PlotDist:Fire + PlotDist:Rain + Fire:Rain + (1|Shrub),   family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle10.lme)
-drop1(hurdle10.lme, test="Chisq")
-
-
-hurdle11.lme=glmer(TargPres ~ PlotDist  + Fire + Rain + PlotDist:Rain + Fire:Rain + (1|Shrub),   family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle11.lme)
-drop1(hurdle11.lme, test="Chisq")
-
-
-
-hurdle12.lme=glmer(TargPres ~ PlotDist  + Fire + Rain + PlotDist:Rain + (1|Shrub),   family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
+hurdle12.lme=glmer(TargPres~ PlotDist +Rain+TranDir + PlotDist:TranDir + (1|Shrub), family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
 summary(hurdle12.lme)
 drop1(hurdle12.lme, test="Chisq")
 
 
+```
 
-hurdle13.lme=glmer(TargPres ~ PlotDist + Rain + PlotDist:Rain + (1|Shrub),   family=binomial, data=Census.Train[Census.Train$MHcode>1,],control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle13.lme)
-drop1(hurdle13.lme, test="Chisq")
-
-
-fixef(hurdle9.lme)
-inv_logit(fixef(hurdle9.lme))
-
-#Not stochastic, uses population level data for previously unobserved levels
-Census.Test$HurdPred=NA
-Census.Test[Census.Test$MHcode>1,"HurdPred"]=predict(hurdle13.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
-
-plot(jitter(TargPres,factor=0.2)~inv_logit(HurdPred), data=Census.Test[Census.Test$MHcode>1,], xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
-
-
-
+What are the fixed effects?  
+```{r look at fixed effects}
+# Fixed effects
+fixef(hurdle12.lme)
 
 ```
 
 
-# Now model presence-only ------------
+```{r Try with Testing Data, echo=FALSE}
+
+#Not stochastic, uses population level data for previously unobserved levels
+Census.Test$HurdPred=NA
+Census.Test[Census.Test$MHcode>1,"HurdPred"]=predict(hurdle12.lme,  newdata=Census.Test[Census.Test$MHcode>1,], allow.new.levels=TRUE )
+
+plot(jitter(TargPres,factor=0.2)~inv_logit(HurdPred), data=Census.Test[Census.Test$MHcode>1,], xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
+
+
+#Try to predict by equation....
+#logitP
+Eq=with(Census.Test,   3.748875457      -0.000842722*PlotDist      -5.686315700*(Rain=="D")       -4.259545202  *(TranDir=="S") +     0.025186048 *PlotDist*(TranDir=="S"))
+Fn=predict(hurdle12.lme,  newdata=Census.Test, allow.new.levels=TRUE )
+# plot(Eq, Fn, abline(c(0,1)))
+
+
+```
+Not bad!  
+
+### Now model presence-only ------------
+Now fit a model where if present, how much cover a is in a plot?  
+Using only non-empty plots from Canopy Dripline and outward (i.e. MHCode > 1 & Census.Test$Target>0)
+Model fitting proccess hidden, only final model results shown.
+
+```{r presence-only lme, echo=FALSE}
 library(lme4)
 library(lmerTest)
+# 
+# 
+# linmod1.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2-Rain:TranDir+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod1.lme)
+# drop1(linmod1.lme, test="Chisq")
+# 
+# linmod2.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 -Rain:TranDir - PlotDist:Rain +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod2.lme)
+# drop1(linmod2.lme, test="Chisq")
+# 
+# linmod3.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 -Rain:TranDir - PlotDist:Rain - Area_Bot:Rain  +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod3.lme)
+# drop1(linmod3.lme, test="Chisq")
+# 
+# linmod4.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 -Rain:TranDir - PlotDist:Rain - Area_Bot:Rain - PlotDist:Fire  +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod4.lme)
+# drop1(linmod4.lme, test="Chisq")
+# 
+# linmod5.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 -Rain:TranDir - PlotDist:Rain - Area_Bot:Rain - PlotDist:Fire -Fire:Rain  +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod5.lme)
+# drop1(linmod5.lme, test="Chisq")
+# 
+# linmod6.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain+TranDir)^2 -Rain:TranDir - PlotDist:Rain - Area_Bot:Rain - PlotDist:Fire -Fire:Rain - PlotDist:TranDir +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod6.lme)
+# drop1(linmod6.lme, test="Chisq")
+# 
+# 
+# linmod7.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+TranDir + PlotDist:Area_Bot  + Area_Bot:Fire  + Fire:TranDir+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod7.lme)
+# drop1(linmod7.lme, test="Chisq")
+# 
+# 
+# linmod8.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain+TranDir + PlotDist:Area_Bot  + Area_Bot:Fire  +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+# summary(linmod8.lme)
+# drop1(linmod8.lme, test="Chisq")
 
-
-linmod1.lme=lmer(LogitTarg~PlotDist*Area_Bot*Fire*Rain+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod1.lme)
-drop1(linmod1.lme)
-
-linmod2.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^3+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod2.lme)
-drop1(linmod2.lme)
-
-linmod3.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^3-PlotDist:Area_Bot:Rain+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod3.lme)
-drop1(linmod3.lme)
-
-linmod4.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^3-PlotDist:Area_Bot:Rain-PlotDist:Fire:Rain +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod4.lme)
-drop1(linmod4.lme)
-
-linmod5.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^3-PlotDist:Rain-PlotDist:Area_Bot:Rain-PlotDist:Fire:Rain +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod5.lme)
-drop1(linmod5.lme)
-
-
-linmod6.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2+Area_Bot:Fire:Rain+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod6.lme)
-drop1(linmod6.lme)
-
-
-linmod7.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Rain+Area_Bot:Fire:Rain+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod7.lme)
-drop1(linmod7.lme)
-
-linmod8.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Rain-PlotDist:Fire+Area_Bot:Fire:Rain+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
-summary(linmod8.lme)
-drop1(linmod8.lme)
-
-linmod9.lme=lmer(LogitTarg~(PlotDist+Area_Bot+Fire+Rain)^2-PlotDist:Rain-PlotDist:Fire+(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
+linmod9.lme=lmer(LogitTarg~PlotDist+Area_Bot+Fire+Rain + PlotDist:Area_Bot  + Area_Bot:Fire  +(1|Shrub), data=Census.Train[Census.Train$MHcode>1 & Census.Train$Target>0,])
 summary(linmod9.lme)
-drop1(linmod9.lme)
-plot(linmod9.lme)
+drop1(linmod9.lme, test="Chisq")
+
+```
+Model Diagnostics
+
+Residual plot looks ok, residuals a little leptokurtic, but at least centered
+```{r Model diagnostics, echo=FALSE, fig.height=3.5}
+par(mfrow=c(1,3))
+plot(fitted(linmod9.lme), resid(linmod9.lme), abline(c(0,0), lty=2))
 qqnorm(resid(linmod9.lme))
 abline(c(0,1))
 hist(resid(linmod9.lme), breaks=40, freq=F)
 curve(dnorm(x, mean=mean(resid(linmod9.lme)), sd=sd(resid(linmod9.lme))), add=TRUE)
 #Go with this one for now???
 
-coef(linmod9.lme)
+```
+
+```{r Presence Only fixed effects}
+# Fixed effects
 fixef(linmod9.lme)
 
-inv_logit(fixef(linmod9.lme))
+```
+Try on Testing Data. 
+Not stochastic, uses population level data for previously unobserved levels
 
+```{r Testing Data, echo=FALSE}
 
-#Try on Testing Data
-predict(linmod9.lme, Census.Test, allow.new.levels=TRUE)  
-#Not stochastic, uses population level data for previously unobserved levels
 
 Census.Test$PresOnlyPred=NA
 Census.Test[Census.Test$MHcode>1 & Census.Test$Target>0,"PresOnlyPred"]=predict(linmod9.lme,  newdata=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], allow.new.levels=TRUE )
 
-
-
 plot(Target/100~inv_logit(PresOnlyPred), data=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], xlab="Predicted Percent Cover", ylab="Observed percent Cover" ) 
+abline(0,1, lty=2)
 
+```
+
+Not Great.

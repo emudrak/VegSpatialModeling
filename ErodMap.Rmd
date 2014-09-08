@@ -1,0 +1,146 @@
+---
+title: "Model Mapped"
+author: "Erika Mudrak"
+date: "Sunday, September 07, 2014"
+output: html_document
+---
+# General Code for applying shrub nutrient models
+# Try to avoid R-specific functions
+```{r}
+library(spatstat)
+library(maptools)
+
+
+source("CompassFunctions.R")
+source("RasterGeometry.R")
+source("ApplyModelFunctions_stemMeasure.R")
+source("PlotTransectGraphs.R")
+
+
+# PICK A DESERT
+#DESERT="Sonoran"
+DESERT="Mojave"
+YEAR="2011"
+
+
+##########################################################
+# Build Null Grid
+
+if (DESERT=="Sonoran") { Xmin=327515.0; Xmax=327598.0; Ymin=3619121.0; Ymax=3619251.0 }
+if (DESERT=="Mojave")  {  Xmin=510386; Xmax=510516; Ymin=3890308; Ymax=3890391 }
+xcrds=seq(from=Xmin, to=Xmax, by=0.2)
+ycrds=seq(from=Ymin, to=Ymax, by=0.2)
+
+#windows(11,7)
+windows(9,11)
+
+# # Look at subset of sample area----
+# Xmin=327555.0; Xmax=327578.0; Ymin=3619151.0; Ymax=3619201.0
+# xcrds=seq(from=Xmin, to=Xmax, by=0.2)
+# ycrds=seq(from=Ymin, to=Ymax, by=0.2)
+
+# # Look at subset of Mojave sample area----
+# Xmin=510400; Xmax=510430.0; Ymin=3890320.0; Ymax=3890350.0
+# xcrds=seq(from=Xmin, to=Xmax, by=0.2)
+# ycrds=seq(from=Ymin, to=Ymax, by=0.2)
+
+
+GPredCov=matrix(data=NA, ncol=length(xcrds), nrow=length(ycrds))
+GPredCov.im=im(GPredCov, xcrds, ycrds, unitname=c("meter","meters"))
+BlankImage.im=GPredCov.im
+
+##########################################################
+# Get Shrub locations
+if (DESERT=="Sonoran") AllShrubs=read.csv("../AZLarreaVolume_Complete.csv",header=TRUE)
+if (DESERT=="Mojave") AllShrubs=read.csv("../CALarreaVolume.csv",header=TRUE)
+
+#For Vegetation Models
+AllShrubs$Area_Bot=AllShrubs$Area_Bot/10000
+AllShrubs$Area_Top=AllShrubs$Area_Top/10000
+AllShrubs$Area_Stem=AllShrubs$Area_Stem/10000
+AllShrubs$Radius_Bot=sqrt(AllShrubs$Area_Bot/pi)
+AllShrubs$Radius_Top=sqrt(AllShrubs$Area_Top/pi)
+AllShrubs$Radius_Stem=sqrt(AllShrubs$Area_Stem/pi)
+
+AllShrubs=AllShrubs[,c( "Easting" , "Northing",  "Area_Bot")]
+AllShrubs$Fire="UB"
+AllShrubs$Rain="A"
+
+#Matrix parameters -----
+
+IntSpcParams=read.csv("VegSpatialModeling/VegInterspaceDistribParams.csv")
+
+
+if((DESERT=="Mojave") & (YEAR=="2011")){
+  AllVegData=read.csv("../Mojave2011.csv", blank.lines.skip=TRUE)
+  AllVegData$AllNative=apply(AllVegData[,c("Allium", "Ambrosia", "Amsinckia","AsteraceaeScorzonera", "Astragalus", "Calyptridium" ,
+    				"Camissonia" ,"Chaenactis","Chorizanthe", "Chryptantha", "Coreopsis.bigelovii", 
+						"Eriogonum.pusillum", "Eriogonum", "Eriogonnum.thurberi", "Eriogonum.gracillium",
+      					"Filago.californica", "Gilia", "Lasthenia", "Lesquerella.ish",  "Linanthus", "Lupinus",
+						"Malacothrix.coulteri", "Malacothrix.glabrata" , "Mentzelia", "Pectocarya", "Phacelia.distans", 
+						"Phacelia.fremontii", "Phacelia", "Pholistoma.membranecum", "Plagiobothrys", "Streptanthella.longirostis",
+						"Unknown", "Unknown.8", "Vulpia.octoflora")], 1, sum)  #Sum counts for all Natives
+}
+if((DESERT=="Mojave") & (YEAR=="2012")){
+AllVegData=read.csv("../Mojave2012.csv", blank.lines.skip=TRUE)
+AllVegData$AllNative=AllVegData$Eriogonum
+}
+if((DESERT=="Sonoran") & (YEAR=="2011")){
+AllVegData=read.csv("../Sonoran2011.csv", blank.lines.skip=TRUE)
+AllVegData$AllNative=apply(AllVegData[,23:36], 1, sum)  #Sum counts for all Natives
+}
+if((DESERT=="Sonoran") & (YEAR=="2012")){
+AllVegData=read.csv("../Sonoran2012.csv", blank.lines.skip=TRUE)
+AllVegData$AllNative=apply(AllVegData[,c(25:27, 29:49)], 1, sum)  #Sum counts for all Natives
+}
+
+
+
+# PICK ONE SPECIES AT A TIME.  Pick the same name as the column heading
+SPECIES="AllNative"
+SPECIES="Erodium.cicutarium"
+
+VegData=AllVegData[,c("Shrub",   "TranDir", "TranNum", "MHcode","Area_Bot", "Plot", "PlotDist",  SPECIES)]
+names(VegData)[ncol(VegData)]="Species"
+
+VegData=VegData[order( VegData$Shrub,VegData$TranNum, VegData$MHcode),]
+VegData[(nrow(VegData)-15): nrow(VegData),1:8]
+#VegData$Biomass=VegData$PCpltCov*VegData$height
+#VegData$Biomass[is.na(VegData$Biomass)]=0
+VegData$Area_Bot=VegData$Area_Bot/10000
+#VegData$Area_top=VegData$Area_top/10000
+#VegData$Area_stem=VegData$Area_stem/10000
+
+#End Matrix Params business -----
+
+
+###########################################################################################################
+
+### Simple Models
+
+ShrubData=AllShrubs
+#  Hurdle Model
+#PICK MODEL TO USE- Must match desert and nutrient
+DESERT
+SPECIES
+summary(hurdle8.lme)
+ # P(Plant)=inv_logit(0.437+0.01*PlotDist - 1.809 * RainD - 0.025440 * PlotDist:RainD)
+
+PresModel= as.data.frame(t(fixef(hurdle12.lme)))
+CovModel=as.data.frame(t(fixef(linmod9.lme)))
+                               
+
+ModelResults=read.csv("SoilProbeSampling/NegExpModelResults.csv",header=T)
+ModelResults[, 1:5]
+whichmodel=2			# 1 for SonK, 2 for SonN, 5 for MojN, 7 for MojK, 10 forMojPC1
+ThisModel=ModelResults[whichmodel,]
+ThisModel
+ThisIntSpPars=subset(IntSpcParams, (Desert==DESERT)&( Nutrient==NUTRIENT))
+
+
+Map.im=ApplyNegExpModel(ThisModel, AllShrubs, ThisIntSpPars, GPredNut.im)
+SonoranN1.im=Map.im
+save(SonoranN1.im, file="SoilProbeSampling/SonoranN1imageObject")
+cols=gray(seq(1,0,length.out=700))
+windows(9,9)
+plot(Map.im,col=cols,main=paste("estimated map for ", NUTRIENT, " in the ", DESERT, " Model ", ThisModel$Model))
