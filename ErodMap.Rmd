@@ -4,11 +4,12 @@ author: "Erika Mudrak"
 date: "Sunday, September 07, 2014"
 output: html_document
 ---
-# General Code for applying shrub nutrient models
-# Try to avoid R-specific functions
-```{r}
+
+
+# Set things up
+```{r Set things up}
 library(spatstat)
-library(maptools)
+library(elmR)
 
 source("CompassFunctions.R")
 source("RasterGeometry.R")
@@ -29,10 +30,8 @@ if (DESERT=="Mojave")  {  Xmin=510386; Xmax=510516; Ymin=3890308; Ymax=3890391 }
 xcrds=seq(from=Xmin, to=Xmax, by=0.2)
 ycrds=seq(from=Ymin, to=Ymax, by=0.2)
 
-
 GPredCov=matrix(data=NA, ncol=length(xcrds), nrow=length(ycrds))
 GPredCov.im=im(GPredCov, xcrds, ycrds, unitname=c("meter","meters"))
-
 
 ##########################################################
 # Get Shrub locations
@@ -42,8 +41,6 @@ if (DESERT=="Mojave") AllShrubs=read.csv("../CALarreaVolume.csv",header=TRUE)
 #For Vegetation Models
 AllShrubs$Area_Bot=AllShrubs$Area_Bot/10000
 AllShrubs=AllShrubs[,c( "Easting" , "Northing",  "Area_Bot")]
-AllShrubs$Fire="UB"
-AllShrubs$Rain="A"
 
 #Matrix parameters 
 InterSpaceCover=read.csv("InterSpace.csv")
@@ -51,15 +48,71 @@ InterSpaceCover=read.csv("InterSpace.csv")
 PresenceModel= read.csv("ErodPresenceModel.csv")
 CoverModel=read.csv("ErodCoverModel.csv")
              
-PresModel=PresenceModel
-CovModel=CoverModel
-ShrubData=AllShrubs
-InterspaceData=InterSpaceCover
-BlankImage.im=GPredCov.im
+# PresModel=PresenceModel
+# CovModel=CoverModel
+# ShrubData=AllShrubs
+# InterspaceData=InterSpaceCover
+# BlankImage.im=GPredCov.im
+
+
+```
+
+Evaluate and plot model for entire field unburned, Ambient Rainfall
+
+```{r Unburned Ambient}
+AllShrubs$Fire="UB"
+AllShrubs$Rain="A"
+AllShrubs$Range=2 
+
 
 Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
 
 PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
 
-grays=colorRampPalette(c("white", "gray90", "gray70","black"))
+grays=colorRampPalette(c("white", "gray20", "gray10","black"))
 plot(PredCov.im, col=grays)
+
+```
+
+Evaluate and plot model for entire field unburned, Drought Conditions
+
+
+```{r Unburned Drought}
+# AllShrubs$Fire="UB"
+# AllShrubs$Rain="D"
+# AllShrubs$Range=2 
+# 
+# Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
+# PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
+# grays=colorRampPalette(c("white", "gray20", "gray10","black"))
+# plot(PredCov.im, col=grays)
+```
+
+
+Evaluate and plot model for entire field burned, Drought Conditions
+
+```{r Burned Drought}
+# AllShrubs$Fire="B"
+# AllShrubs$Rain="D"
+# AllShrubs$Range=2 
+# 
+# Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
+# PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
+# grays=colorRampPalette(c("white", "gray20", "gray10","black"))
+# plot(PredCov.im, col=grays)
+```
+
+
+Evaluate and plot model for entire field Burned, Ambient Rainfall
+```{r Burned Ambient}
+# AllShrubs$Fire="B"
+# AllShrubs$Rain="A"
+# AllShrubs$Range=2 
+# 
+# Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
+# PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
+# grays=colorRampPalette(c("white", "gray20", "gray10","black"))
+# plot(PredCov.im, col=grays)
+```
+
+

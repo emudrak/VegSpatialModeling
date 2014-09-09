@@ -9,9 +9,8 @@ ApplyHurdleModel=function(PresModel, CovModel, ShrubData, InterspaceData, BlankI
   # "AIC"        "PARM.mu.N"  "PARM.mu.S"  "PARM.slope" "PARM.sig"   "PARC.mu.N"  "PARC.mu.S" 
   # "PARC.slope" "PARC.sig"   "SIGMA"    
   # ShrubData is a data frame containing information on shrubs in area to be mapped: 
-  #    columns: Easting","Northing","Area_Bot"
-  # ObsNutData is a data frame with the observed nutrient data 
-  # 	columns: Nutrient, Distance
+  #    columns: Easting","Northing","Area_Bot","Fire","Rain","Range"
+  # InterspaceData is a value of the mean Cover at MHcode=4
   # BlankImage.im is an image pre-made with the geographic range that should be mapped, and pixel resolution desired
   
   Ymin=BlankImage.im$yrange[1]
@@ -21,22 +20,16 @@ ApplyHurdleModel=function(PresModel, CovModel, ShrubData, InterspaceData, BlankI
   
   
   # Sample Shrub is the list of shrubs to model against. 
-  SampleShrub=subset(ShrubData,(Northing<=Ymax)&(Northing>=Ymin)&(Easting<=Xmax)&(Easting>=Xmin),  #Only want shrubs within boundaries
-      select=c("Easting","Northing","Area_Bot","Rain","Fire"))	#Only want certain info
-  rownames(SampleShrub)=1:nrow(SampleShrub)
-  SampleShrub$Range=2.50  
+  SampleShrub=subset(ShrubData,
+      (Northing<=Ymax)&(Northing>=Ymin)&(Easting<=Xmax)&(Easting>=Xmin), #Only want shrubs within boundaries
+      select=c("Easting","Northing","Area_Bot","Rain","Fire","Range")) #Only certain info
+#  rownames(SampleShrub)=1:nrow(SampleShrub)
 
-  #############################################################################
-  # initialize background (for points not under influence of any shrub) with something- for now make it 20%
-
+#############################################################################
+# initialize background (for points not under influence of any shrub) with something
 PredCov=matrix(data=InterspaceData,
                ncol=BlankImage.im$dim[2], nrow=BlankImage.im$dim[1])
-#   
-#   ################# GET RANGE OF INFLUENCE FOR SHRUB
-#   how? 
-
-
-  ###############	General Code	########################
+###############	General Code	########################
   
 pb <- txtProgressBar(min = 0, max = nrow(SampleShrub), style = 3)
 
@@ -44,8 +37,8 @@ for (k in 1:nrow(SampleShrub)){
   thisShrub=SampleShrub[k,]
   ShrubPixel=topixel(BlankImage.im, thisShrub$Easting, thisShrub$Northing)
   thisShrubRad=sqrt(thisShrub$Area_Bot/pi)  # Use Area_Bot to get approx. radius	
-  thisXrange=trunc((thisShrubRad + thisShrub$Range)/BlankImage.im$xstep) 	
-  thisYrange=trunc((thisShrubRad + thisShrub$Range)/BlankImage.im$ystep) 	
+  thisXrange=trunc((thisShrubRad + thisShrub$Range)/BlankImage.im$xstep) 	#in pixels
+  thisYrange=trunc((thisShrubRad + thisShrub$Range)/BlankImage.im$ystep)  #in pixels	
   #Make sure pixels to check are within range
   xlist=(ShrubPixel[1]-thisXrange): (ShrubPixel[1]+thisXrange)
   ylist=(ShrubPixel[2]-thisYrange): (ShrubPixel[2]+thisYrange)
