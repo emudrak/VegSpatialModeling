@@ -59,7 +59,7 @@ CoverModel=read.csv("ErodCoverModel.csv")
 
 Evaluate and plot model for entire field unburned, Ambient Rainfall
 
-```{r Unburned Ambient}
+```{r Unburned Ambient, message=FALSE}
 AllShrubs$Fire="UB"
 AllShrubs$Rain="A"
 AllShrubs$Range=2 
@@ -77,42 +77,42 @@ plot(PredCov.im, col=grays)
 Evaluate and plot model for entire field unburned, Drought Conditions
 
 
-```{r Unburned Drought}
-# AllShrubs$Fire="UB"
-# AllShrubs$Rain="D"
-# AllShrubs$Range=2 
-# 
-# Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
-# PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
-# grays=colorRampPalette(c("white", "gray20", "gray10","black"))
-# plot(PredCov.im, col=grays)
+```{r Unburned Drought, message=FALSE}
+AllShrubs$Fire="UB"
+AllShrubs$Rain="D"
+AllShrubs$Range=2 
+
+Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
+PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
+grays=colorRampPalette(c("white", "gray20", "gray10","black"))
+plot(PredCov.im, col=grays)
 ```
 
 
 Evaluate and plot model for entire field burned, Drought Conditions
 
-```{r Burned Drought}
-# AllShrubs$Fire="B"
-# AllShrubs$Rain="D"
-# AllShrubs$Range=2 
-# 
-# Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
-# PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
-# grays=colorRampPalette(c("white", "gray20", "gray10","black"))
-# plot(PredCov.im, col=grays)
+```{r Burned Drought, message=FALSE}
+AllShrubs$Fire="B"
+AllShrubs$Rain="D"
+AllShrubs$Range=2 
+
+Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
+PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
+grays=colorRampPalette(c("white", "gray20", "gray10","black"))
+plot(PredCov.im, col=grays)
 ```
 
 
 Evaluate and plot model for entire field Burned, Ambient Rainfall
-```{r Burned Ambient}
-# AllShrubs$Fire="B"
-# AllShrubs$Rain="A"
-# AllShrubs$Range=2 
-# 
-# Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
-# PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
-# grays=colorRampPalette(c("white", "gray20", "gray10","black"))
-# plot(PredCov.im, col=grays)
+```{r Burned Ambient, message=FALSE}
+AllShrubs$Fire="B"
+AllShrubs$Rain="A"
+AllShrubs$Range=2 
+
+Cover=ApplyHurdleModel(PresenceModel, CoverModel, AllShrubs, InterSpaceCover, GPredCov.im)
+PredCov.im=im(as.numeric(Cover), xcol=GPredCov.im$xcol,yrow=GPredCov.im$yrow)
+grays=colorRampPalette(c("white", "gray20", "gray10","black"))
+plot(PredCov.im, col=grays)
 ```
 
 
