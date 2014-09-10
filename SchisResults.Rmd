@@ -77,12 +77,13 @@ names(Census)[1]="Shrub"
 # Chose target species to model this time --------------
 TargSpec="ErodCover"; ylabel="% Cover" 
 #TargSpec="Erodium"; ylabel="# Plants" 
+TargSpec="SchisCover"; ylabel="% Cover" 
 
 Census$Target=round(Census[,TargSpec]) #Round to deal with issue of 0.1 percent cover values
 Census$LogitTarg=logit(Census$Target/100)
 Census$TargPres=ceiling(Census$Target/100) #Make a new binary variable showing zero or not
 
-write.csv(mean(Census$Target[Census$DistClass=="OF"])/100, file="Interspace.csv", row.names=F)
+write.csv(mean(Census$Target[Census$DistClass=="OF"])/100, file="SchisInterspace.csv", row.names=F)
 ```
 
 
@@ -189,27 +190,24 @@ hurdle1.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 + (1|Shrub), fami
 summary(hurdle1.lme)
 drop1(hurdle1.lme, test="Chisq")
 
-
-
-hurdle2.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire +DistClass:TranDir+Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
+hurdle2.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 - DistClass:TranDir + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
 summary(hurdle2.lme)
 drop1(hurdle2.lme, test="Chisq")
 
 
-
-hurdle3.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire + Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
+hurdle3.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 - DistClass:TranDir - DistClass:Area_Bot + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
 summary(hurdle3.lme)
 drop1(hurdle3.lme, test="Chisq")
 
-hurdle4.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
+hurdle4.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 - DistClass:TranDir - DistClass:Area_Bot - DistClass:Fire + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
 summary(hurdle4.lme)
 drop1(hurdle4.lme, test="Chisq")
 
-hurdle5.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
+hurdle5.lme=glmer(TargPres~ Area_Bot + Fire + TranDir + Area_Bot:Fire      + Area_Bot:TranDir + Fire:TranDir+  (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
 summary(hurdle5.lme)
 drop1(hurdle5.lme, test="Chisq")
 
-hurdle6.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + Area_Bot:TranDir  + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
+hurdle6.lme=glmer(TargPres~ Area_Bot + Fire + TranDir + Area_Bot:Fire      + Area_Bot:TranDir + Fire:TranDir+  (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
 summary(hurdle6.lme)
 drop1(hurdle6.lme, test="Chisq")
 
