@@ -1,0 +1,186 @@
+---
+title: "CoverbySpecies"
+author: "Erika Mudrak"
+date: "Saturday, September 13, 2014"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r load libraries, echo=FALSE, results='hide', message=FALSE}
+
+
+library(nlme)
+#library(spatstat)
+library(devtools)  #do once
+install_github("elmR", "emudrak")  #do once, equiv to install.packages()
+library(elmR)
+#this is a package I wrote with following transformation functions----
+logit= function (x) 
+{
+    if (sum(x[x != 0], na.rm = TRUE) == 0) 
+        eps = 0
+    else eps = min(x[x != 0], na.rm = TRUE)
+    x[x == 0] = 0.5 * eps
+    x[x == 1] = 1 - 0.5 * eps
+    return(log(x/(1 - x)))
+}
+inv_logit=function (alpha) 
+{
+    alpha[alpha > 709] = 709
+    return(exp(alpha)/(exp(alpha) + 1))
+}
+logw0=function (x) 
+{
+    c = trunc(log(min(x[x > 0], na.rm = T)))
+    d = exp(c)
+    return(log(x + d) - c)
+}
+# end (mini) package  -----
+
+#setwd("C:/Users/elm26/Documents/SERDPproject/VegSpatialModeling/VegSpatialModeling")
+```
+
+FIrst Work with Mojave
+
+```{r Read in and munge data , echo=FALSE, results='hide'}
+# PICK A DESERT
+#DESERT="Sonoran"
+DESERT="Mojave"
+YEAR="2013Xtra"
+
+if((DESERT=="Mojave") & (YEAR=="2013Xtra")){
+  CensusData=read.csv("../Mojave2013Intense24Shrubs.csv", blank.lines.skip=TRUE)
+  CensusData$Invasives=CensusData$Erodium+CensusData$Schismus+CensusData$Bromus
+  Shrubs=read.csv("../CALarreaVolume.csv")
+  Shrubs=subset(Shrubs, ShrubID %in% as.character(1:168))
+  Shrubs$Shrub=as.numeric(as.character(Shrubs$ShrubID)) 
+}
+
+Census=merge(Shrubs[,c("Shrub","Area_Bot","Vol_Bot","Vol_Stem")], CensusData,  by.y="Shrub", by.x="Shrub")
+
+Census$Area_Bot=Census$Area_Bot/10000
+Census$Vol_Bot=Census$Vol_Bot/1000000
+Census$Vol_Stem=Census$Vol_Stem/1000000
+Census$DistClass=cut(Census$MHcode, breaks=c(0,2,3,4), labels=c("UC","ON","OF"))
+
+Census=Census[order(Census[,"Shrub"], Census[,"MHcode"]), ]
+names(Census)[1]="Shrub"
+ 
+```
+
+
+
+
+```{r Choose Target, results='hide', echo=FALSE}
+# Chose target species to model this time --------------
+TargSpec="NatCover"; ylabel="% Cover" 
+#TargSpec="Erodium"; ylabel="# Plants" 
+
+display=function(x, lab){
+x=round(x) #Round to deal with issue of 0.1 percent cover values
+hist(logit(x/100), breaks= 40, xlab=paste("logit ",lab), main=NA)
+}
+
+
+display(Census$ErodCover, lab="Erodium % Cover")
+display(Census$SchisCover, lab="SChismus % Cover")
+display(Census$NatCover, lab="Native % Cover")
+
+```
+
+
+
+```{r Plot With transformed response, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5}
+
+# Setup for elaborate plotting 
+colorset=sample(rainbow(168))
+firecols=c("gray40", "green")
+dircols=c("red","blue")
+dirlty=c(1,2)
+firepch=c(16,1)
+areawts=c(1,2,3)
+
+
+
+blah=boxplot(LogitTarg~DistClass*Fire*TranDir, data=Census.Train, axes=FALSE, frame=T, col=rep(firecols,each=3, times=2), ylab="Percent Cover")
+Axis(at=1:12, labels=substr(blah$names,1,2), side=1)
+Axis(side=2, at=logit(seq(0,0.3, by=0.01)), labels=seq(0,0.3, by=0.01),cex.axis=0.8)
+mtext(rep(levels(Census.Train$Fire),2), line=2, side=1, at=c(2,5,8,11))
+axis( at=c(3.5, 6.5, 9.5), side=1, label=F, tck=-0.2 )
+mtext(levels(Census.Train$TranDir), line=3, side=1, at=c(3.5, 9.5))
+axis( at=c( 6.5), side=1, label=F, tck=-0.3 )
+
+library(plyr)
+Agr.Train=ddply(Census.Train, .(Shrub,DistClass, Fire,Area_Bot), function(x) c(meanCover=mean(x$Target), stderr=sqrt(var(x$Target)/length(x$Target))))
+
+boxplot(meanCover~ DistClass, data=Agr.Train, col="white", lty="blank", ylim=c(0,32), outline=F, ylab="Percent Cover")
+#Add error bars, but messy
+d_ply(Agr.Train, .(Shrub), function(x) {
+    lines(x$DistClass, x$meanCover, col=firecols[x$Fire]) 
+    xes=jitter(1:3, amount=0.02)
+    arrows(xes, x$meanCover,xes, x$meanCover+x$stderr, angle=90, length=0.02, col=firecols[x$Fire])
+    arrows(xes, x$meanCover,xes, x$meanCover-x$stderr, angle=90, length=0.02, col=firecols[x$Fire])
+    })
+
+#Set scale ranges for this target
+xplotmax=max(Census.Train[,"PlotDist"], na.rm=TRUE)
+xplotmax=3
+#xplotmax=max(Census.Train[,"MHcode"], na.rm=TRUE)
+yplotmax=max(Census.Train[,"Target"])
+
+# 
+# plotscheme="fire"
+# # plotscheme="direction"
+# 
+# if (plotscheme=="fire"){
+#     thesecols=firecols; names=levels(Census.Train$Fire)
+#     }else 
+# if (plotscheme=="rain"){
+#       thesecols=watercols ; names=levels(Census.Train$Rain)
+#     }else 
+# if (plotscheme=="direction"){
+#       thesecols=dircols; names=levels(Census.Train$TranDir)  
+#     }
+# legend(2.1,0.90* yplotmax, levels(Census.Train$Fire), col=thesecols, lwd=2, lty=1, bty="n") 
+
+```
+
+
+Sonoran
+
+```{r}
+if((DESERT=="Sonoran") & (YEAR=="2013Xtra")){
+  CensusData=read.csv("../Sonoran2013Intense24Shrubs.csv", blank.lines.skip=TRUE)
+  CensusData$Invasives=CensusData$Brassica+CensusData$Schismus
+  Shrubs=read.csv("../AZLarreaVolume.csv")
+  Shrubs=subset(Shrubs, ShrubID %in% as.character(1:168))
+  Shrubs$Shrub=as.numeric(as.character(Shrubs$ShrubID)) 
+}
+
+
+Census=merge(Shrubs[,c("Shrub","Area_Bot","Vol_Bot","Vol_Stem")], CensusData,  by.y="Shrub", by.x="Shrub")
+
+Census$Area_Bot=Census$Area_Bot/10000
+Census$Vol_Bot=Census$Vol_Bot/1000000
+Census$Vol_Stem=Census$Vol_Stem/1000000
+Census$DistClass=cut(Census$MHcode, breaks=c(0,2,3,4), labels=c("UC","ON","OF"))
+
+
+Census=Census[order(Census[,"Shrub"], Census[,"MHcode"]), ]
+names(Census)[1]="Shrub"
+```
+
+
+
+
+```{r Choose Target, results='hide', echo=FALSE}
+# Chose target species to model this time --------------
+
+display(Census$ErodCover, lab="Erodium % Cover")
+display(Census$SchisCover, lab="SChismus % Cover")
+display(Census$NatCover, lab="Native % Cover")
+
+```

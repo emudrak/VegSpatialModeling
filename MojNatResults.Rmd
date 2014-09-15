@@ -75,7 +75,7 @@ names(Census)[1]="Shrub"
 
 ```{r Choose Target, results='hide', echo=FALSE}
 # Chose target species to model this time --------------
-TargSpec="ErodCover"; ylabel="% Cover" 
+TargSpec="NatCover"; ylabel="% Cover" 
 #TargSpec="Erodium"; ylabel="# Plants" 
 
 Census$Target=round(Census[,TargSpec]) #Round to deal with issue of 0.1 percent cover values
@@ -194,29 +194,26 @@ library(lme4)
 library(lmerTest)
 
 
-# hurdle1.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 + (1|Shrub), family=binomial, data=Census.Train)
-# summary(hurdle1.lme)
-# drop1(hurdle1.lme, test="Chisq")
-# 
-# hurdle2.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire +DistClass:TranDir+Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
-# summary(hurdle2.lme)
-# drop1(hurdle2.lme, test="Chisq")
-# 
-# hurdle3.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire +Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir+ (1|Shrub), family=binomial, data=Census.Train)
-# summary(hurdle3.lme)
-# drop1(hurdle3.lme, test="Chisq")
-# 
-# hurdle4.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir +Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
-# summary(hurdle4.lme)
-# drop1(hurdle4.lme, test="Chisq")
-# 
-# hurdle5.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir +Area_Bot:Fire + Area_Bot:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
-# summary(hurdle5.lme)
-# drop1(hurdle5.lme, test="Chisq")
+hurdle1.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 + (1|Shrub), family=binomial, data=Census.Train)
+summary(hurdle1.lme)
+drop1(hurdle1.lme, test="Chisq")
 
-hurdle6.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + Area_Bot:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
-summary(hurdle6.lme)
-# drop1(hurdle6.lme, test="Chisq")
+hurdle2.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire +DistClass:TranDir+Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
+summary(hurdle2.lme)
+drop1(hurdle2.lme, test="Chisq")
+
+hurdle3.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir +DistClass:TranDir+Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
+drop1(hurdle3.lme, test="Chisq")
+
+hurdle4.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir +DistClass:TranDir+Area_Bot:Fire + (1|Shrub), family=binomial, data=Census.Train)
+drop1(hurdle4.lme, test="Chisq")
+
+hurdle5.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir +DistClass:TranDir + (1|Shrub), family=binomial, data=Census.Train)
+summary(hurdle5.lme)
+drop1(hurdle5.lme, test="Chisq")
+
+hurdle6.lme=glmer(TargPres~DistClass+Fire+TranDir +DistClass:TranDir + (1|Shrub), family=binomial, data=Census.Train)
+ drop1(hurdle6.lme, test="Chisq")
 
 
 ```

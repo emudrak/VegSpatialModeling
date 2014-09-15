@@ -75,18 +75,17 @@ names(Census)[1]="Shrub"
 
 ```{r Choose Target, results='hide', echo=FALSE}
 # Chose target species to model this time --------------
-TargSpec="ErodCover"; ylabel="% Cover" 
-#TargSpec="Erodium"; ylabel="# Plants" 
 TargSpec="SchisCover"; ylabel="% Cover" 
+#TargSpec="Erodium"; ylabel="# Plants" 
 
 Census$Target=round(Census[,TargSpec]) #Round to deal with issue of 0.1 percent cover values
 Census$LogitTarg=logit(Census$Target/100)
 Census$TargPres=ceiling(Census$Target/100) #Make a new binary variable showing zero or not
 
-write.csv(mean(Census$Target[Census$DistClass=="OF"])/100, file="SchisInterspace.csv", row.names=F)
+write.csv(mean(Census$Target[Census$DistClass=="OF"])/100, file="Interspace.csv", row.names=F)
 ```
 
-
+Using only data with Ambient Rainfall levels, split into testing and training data, stratified by Fire and TranDir treatments. 
 
 ```{r Training/Testing Data, results='hide', echo=FALSE}
 # Make training and Testing Data- ------------
@@ -123,93 +122,101 @@ with(Census.Train, hist(logw0(Target/100), breaks= 40, xlab=paste("log ", ylabel
 
 with(Census.Train,hist(logit(Target/100), breaks= 40, xlab=paste("logit ",ylabel), main=NA))
 
-mean(CensusData$ErodCover[CensusData$MHcode>=3])
-
-
 ```
 
 
 
-```{r Plot With transformed response, echo=FALSE}
+```{r Plot With transformed response, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5}
 
 # Setup for elaborate plotting 
 colorset=sample(rainbow(168))
 firecols=c("gray40", "green")
 dircols=c("red","blue")
+dirlty=c(1,2)
 firepch=c(16,1)
+areawts=c(1,2,3)
 
 
 
-boxplot(LogitTarg~DistClass*Fire*TranDir, data=Census.Train)
+blah=boxplot(LogitTarg~DistClass*Fire*TranDir, data=Census.Train, axes=FALSE, frame=T, col=rep(firecols,each=3, times=2), ylab="Percent Cover")
+Axis(at=1:12, labels=substr(blah$names,1,2), side=1)
+Axis(side=2, at=logit(seq(0,0.3, by=0.01)), labels=seq(0,0.3, by=0.01),cex.axis=0.8)
+mtext(rep(levels(Census.Train$Fire),2), line=2, side=1, at=c(2,5,8,11))
+axis( at=c(3.5, 6.5, 9.5), side=1, label=F, tck=-0.2 )
+mtext(levels(Census.Train$TranDir), line=3, side=1, at=c(3.5, 9.5))
+axis( at=c( 6.5), side=1, label=F, tck=-0.3 )
 
+library(plyr)
+Agr.Train=ddply(Census.Train, .(Shrub,DistClass, Fire,Area_Bot), function(x) c(meanCover=mean(x$Target), stderr=sqrt(var(x$Target)/length(x$Target))))
+
+boxplot(meanCover~ DistClass, data=Agr.Train, col="white", lty="blank", outline=F, ylab="Percent Cover")
+#Add error bars, but messy
+d_ply(Agr.Train, .(Shrub), function(x) {
+    lines(x$DistClass, x$meanCover, col=firecols[x$Fire]) 
+    xes=jitter(1:3, amount=0.02)
+    arrows(xes, x$meanCover,xes, x$meanCover+x$stderr, angle=90, length=0.02, col=firecols[x$Fire])
+    arrows(xes, x$meanCover,xes, x$meanCover-x$stderr, angle=90, length=0.02, col=firecols[x$Fire])
+    })
 
 #Set scale ranges for this target
 xplotmax=max(Census.Train[,"PlotDist"], na.rm=TRUE)
+xplotmax=3
 #xplotmax=max(Census.Train[,"MHcode"], na.rm=TRUE)
-yplotmax=max(Census.Train[,"LogitTarg"])
+yplotmax=max(Census.Train[,"Target"])
 
-
-plotscheme="fire"
-# plotscheme="direction"
-
-with(Census.Train, plot(c(1,xplotmax), range(Census.Train$LogitTarg) , pch=NA, main=paste(DESERT, YEAR, TargSpec), ylab=paste("Logit transformmed ", ylabel), xlab="Distance from Shrub Stem" ))
-for (i in unique(Census.Train$Shrub)) {  # i=ShrubNumber
-    theseplots=Census.Train[Census.Train$Shrub==i,]
-    if (plotscheme=="fire") mycol=firecols[theseplots$Fire[1] ] else    
-    if (plotscheme=="direction") mycol=dircols[theseplots$TranDir[1] ]
-   lines(theseplots$PlotDist, theseplots$LogitTarg,   
-#    lines(theseplots$MHcode, theseplots$LogitTarg,        
-        pch=20,lwd=2, type="o", lty=1,
-        col=mycol  )
-} # end of i loop
-if (plotscheme=="fire"){
-    thesecols=firecols; names=levels(Census.Train$Fire)
-    }else 
-if (plotscheme=="rain"){
-      thesecols=watercols ; names=levels(Census.Train$Rain)
-    }else 
-if (plotscheme=="direction"){
-      thesecols=dircols; names=levels(Census.Train$TranDir)  
-    }
-legend(200,0.90* yplotmax, levels(Census.Train$Fire), col=thesecols, lwd=2, lty=1, bty="n") 
+# 
+# plotscheme="fire"
+# # plotscheme="direction"
+# 
+# if (plotscheme=="fire"){
+#     thesecols=firecols; names=levels(Census.Train$Fire)
+#     }else 
+# if (plotscheme=="rain"){
+#       thesecols=watercols ; names=levels(Census.Train$Rain)
+#     }else 
+# if (plotscheme=="direction"){
+#       thesecols=dircols; names=levels(Census.Train$TranDir)  
+#     }
+# legend(2.1,0.90* yplotmax, levels(Census.Train$Fire), col=thesecols, lwd=2, lty=1, bty="n") 
 
 ```
 
+
+Because of the zero-inflation, fit a two-stage model.  
 
 ### Hurdle Model------------ 
 First fit "hurdle" model, i.e. a presence/absense model indicating whether the plot has plants or not. 
 Using only plots from Canopy Dripline and outward (i.e. MHCode > 1)
 Model fitting proccess hidden, only final model results shown.
 
-```{r Logistic modeling, echo=FALSE, message=FALSE}
+```{r Logistic modeling, echo=FALSE, message=FALSE, warning=FALSE}
 library(lme4)
 library(lmerTest)
 
 
-hurdle1.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle1.lme)
-drop1(hurdle1.lme, test="Chisq")
+# hurdle1.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 + (1|Shrub), family=binomial, data=Census.Train)
+# summary(hurdle1.lme)
+# drop1(hurdle1.lme, test="Chisq")
+# 
+# hurdle2.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire +DistClass:TranDir+Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
+# summary(hurdle2.lme)
+# drop1(hurdle2.lme, test="Chisq")
+# 
+# hurdle3.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire +Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir+ (1|Shrub), family=binomial, data=Census.Train)
+# summary(hurdle3.lme)
+# drop1(hurdle3.lme, test="Chisq")
+# 
+# hurdle4.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir +Area_Bot:Fire + Area_Bot:TranDir + Fire:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
+# summary(hurdle4.lme)
+# drop1(hurdle4.lme, test="Chisq")
+# 
+# hurdle5.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir +Area_Bot:Fire + Area_Bot:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
+# summary(hurdle5.lme)
+# drop1(hurdle5.lme, test="Chisq")
 
-hurdle2.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 - DistClass:TranDir + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle2.lme)
-drop1(hurdle2.lme, test="Chisq")
-
-
-hurdle3.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 - DistClass:TranDir - DistClass:Area_Bot + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle3.lme)
-drop1(hurdle3.lme, test="Chisq")
-
-hurdle4.lme=glmer(TargPres~(DistClass+Area_Bot+Fire+TranDir)^2 - DistClass:TranDir - DistClass:Area_Bot - DistClass:Fire + (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle4.lme)
-drop1(hurdle4.lme, test="Chisq")
-
-hurdle5.lme=glmer(TargPres~ Area_Bot + Fire + TranDir + Area_Bot:Fire      + Area_Bot:TranDir + Fire:TranDir+  (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
-summary(hurdle5.lme)
-drop1(hurdle5.lme, test="Chisq")
-
-hurdle6.lme=glmer(TargPres~ Area_Bot + Fire + TranDir + Area_Bot:Fire      + Area_Bot:TranDir + Fire:TranDir+  (1|Shrub), family=binomial, data=Census.Train,control = glmerControl(optimizer = "bobyqa"))
+hurdle6.lme=glmer(TargPres~DistClass+Area_Bot+Fire+TranDir + Area_Bot:TranDir  + (1|Shrub), family=binomial, data=Census.Train)
 summary(hurdle6.lme)
-drop1(hurdle6.lme, test="Chisq")
+# drop1(hurdle6.lme, test="Chisq")
 
 
 ```
@@ -221,7 +228,7 @@ fixef(hurdle6.lme)
 
 ```
 
-
+Apply model to testing data to see how we did.
 ```{r Try with Testing Data, echo=FALSE}
 
 #Not stochastic, uses population level data for previously unobserved levels
@@ -230,12 +237,12 @@ Census.Test$HurdPred=predict(hurdle6.lme,  newdata=Census.Test, allow.new.levels
 
 plot(jitter(TargPres,factor=0.2)~inv_logit(HurdPred), data=Census.Test, xlab="Probability of presence", ylab="Observed presence (jittered)" ) 
 
-
-#Try to predict by equation....
-#logitP
-Eq=with(Census.Test,   3.748875457      -0.000842722*PlotDist      -5.686315700*(Rain=="D")       -4.259545202  *(TranDir=="S") +     0.025186048 *PlotDist*(TranDir=="S"))
-Fn=predict(hurdle12.lme,  newdata=Census.Test, allow.new.levels=TRUE )
-# plot(Eq, Fn, abline(c(0,1)))
+# 
+# #Try to predict by equation....
+# #logitP
+# Eq=with(Census.Test,   3.748875457      -0.000842722*PlotDist      -5.686315700*(Rain=="D")       -4.259545202  *(TranDir=="S") +     0.025186048 *PlotDist*(TranDir=="S"))
+# Fn=predict(hurdle12.lme,  newdata=Census.Test, allow.new.levels=TRUE )
+# # plot(Eq, Fn, abline(c(0,1)))
 
 
 ```
@@ -253,53 +260,25 @@ library(lmerTest)
 #
 
 
-linmod1.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod1.lme)
-drop1(linmod1.lme, test="Chisq")
+# linmod1.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^2 + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
+# summary(linmod1.lme)
+# drop1(linmod1.lme, test="Chisq")
+# 
+# linmod2.lme=lmer(LogitTarg~DistClass+Area_Bot+Fire+TranDir + DistClass:Fire +DistClass:TranDir+Area_Bot:Fire + Fire:TranDir  + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
+# summary(linmod2.lme)
+# drop1(linmod2.lme, test="Chisq")
+# 
+# linmod3.lme=lmer(LogitTarg~DistClass+Area_Bot+Fire+TranDir + DistClass:TranDir+Area_Bot:Fire + Fire:TranDir  + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
+# summary(linmod3.lme)
+# drop1(linmod3.lme, test="Chisq")
 
-linmod2.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 - Area_Bot:Fire:TranDir  + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod2.lme)
-drop1(linmod2.lme, test="Chisq")
-
-
-linmod3.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 - Area_Bot:Fire:TranDir - DistClass:Fire:TranDir + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod3.lme)
-drop1(linmod3.lme, test="Chisq")
-
-linmod4.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 - Area_Bot:Fire:TranDir - DistClass:Fire:TranDir - Fire:TranDir+ (1|Shrub), data=Census.Train[Census.Train$Target>0,])
+linmod4.lme=lmer(LogitTarg~DistClass+Area_Bot+Fire+TranDir + DistClass:TranDir+Area_Bot:Fire + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
 summary(linmod4.lme)
-drop1(linmod4.lme, test="Chisq")
-
-linmod5.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 - Area_Bot:Fire:TranDir - DistClass:Fire:TranDir - Fire:TranDir+ (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod5.lme)
-drop1(linmod5.lme, test="Chisq")
-
-linmod6.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 - Area_Bot:Fire:TranDir - DistClass:Fire:TranDir - Fire:TranDir - DistClass:Area_Bot:TranDir+ (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod6.lme)
-drop1(linmod6.lme, test="Chisq")
-
-linmod7.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 - Area_Bot:Fire:TranDir - DistClass:Fire:TranDir - Fire:TranDir - DistClass:Area_Bot:TranDir - DistClass:Area_Bot:Fire + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod7.lme)
-drop1(linmod7.lme, test="Chisq")
-
-linmod7.lme=lmer(LogitTarg~(DistClass+Area_Bot+Fire+TranDir)^3 - Area_Bot:Fire:TranDir - DistClass:Fire:TranDir - Fire:TranDir - DistClass:Area_Bot:TranDir - DistClass:Area_Bot:Fire + (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod7.lme)
-drop1(linmod7.lme, test="Chisq")
-
-linmod8.lme=lmer(LogitTarg~ DistClass+Area_Bot+Fire+TranDir+ DistClass:Area_Bot + DistClass:Fire   + DistClass:TranDir + Area_Bot:Fire  +  (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod8.lme)
-drop1(linmod8.lme, test="Chisq")
-
-linmod8.lme=lmer(LogitTarg~ DistClass+Area_Bot+Fire+TranDir+ DistClass:Area_Bot + DistClass:Fire   + DistClass:TranDir + Area_Bot:Fire  +  (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod8.lme)
-drop1(linmod8.lme, test="Chisq")
-
-linmod9.lme=lmer(LogitTarg~ DistClass+Area_Bot+Fire+TranDir+ DistClass:Area_Bot + DistClass:TranDir + Area_Bot:Fire  +  (1|Shrub), data=Census.Train[Census.Train$Target>0,])
-summary(linmod9.lme)
-drop1(linmod9.lme, test="Chisq")
+# drop1(linmod4.lme, test="Chisq")
 
 
-anova(linmod9.lme)
+
+anova(linmod4.lme)
 
 
 ```
@@ -308,18 +287,19 @@ Model Diagnostics
 Residual plot looks ok, residuals a little leptokurtic, but at least centered
 ```{r Model diagnostics, echo=FALSE, fig.height=3.5}
 par(mfrow=c(1,3))
-plot(fitted(linmod9.lme), resid(linmod9.lme), abline(c(0,0), lty=2))
-qqnorm(resid(linmod9.lme))
+plot(fitted(linmod4.lme), resid(linmod4.lme), abline(c(0,0), lty=2))
+qqnorm(resid(linmod4.lme))
 abline(c(0,1))
-hist(resid(linmod9.lme), breaks=40, freq=F)
-curve(dnorm(x, mean=mean(resid(linmod9.lme)), sd=sd(resid(linmod9.lme))), add=TRUE)
+hist(resid(linmod4.lme), breaks=40, freq=F)
+curve(dnorm(x, mean=mean(resid(linmod4.lme)), sd=sd(resid(linmod4.lme))), add=TRUE)
 #Go with this one for now???
+
 
 ```
 
 ```{r Presence Only fixed effects}
 # Fixed effects
-fixef(linmod9.lme)
+fixef(linmod4.lme)
 
 ```
 Try on Testing Data. 
@@ -329,7 +309,7 @@ Not stochastic, uses population level data for previously unobserved levels
 
 
 Census.Test$PresOnlyPred=NA
-Census.Test[Census.Test$MHcode>1 & Census.Test$Target>0,"PresOnlyPred"]=predict(linmod9.lme,  newdata=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], allow.new.levels=TRUE )
+Census.Test[Census.Test$MHcode>1 & Census.Test$Target>0,"PresOnlyPred"]=predict(linmod4.lme,  newdata=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], allow.new.levels=TRUE )
 
 plot(Target/100~inv_logit(PresOnlyPred), data=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], xlab="Predicted Percent Cover", ylab="Observed percent Cover" ) 
 abline(0,1, lty=2)
@@ -340,12 +320,12 @@ abline(0,1, lty=2)
 
 Not Great.
 
-```{r Save models, echo=FALSE, message=FALSE, results='hide'}
-GoodPresenceModel=as.data.frame(t(fixef(hurdle12.lme)))
+```{r Save models, echo=FALSE, message=FALSE, results='hide', warning=FALSE}
+GoodPresenceModel=as.data.frame(t(fixef(hurdle6.lme)))
 names(GoodPresenceModel)[1]="Int"
 names(GoodPresenceModel)[which(names(GoodPresenceModel)=="PlotDist:TranDirS")]="Dist.DirS"
-write.csv(as.data.frame(t(fixef(hurdle12.lme))), "ErodPresenceModel.csv", row.names=F)
-GoodCoverModel=as.data.frame(t(fixef(linmod9.lme)))
+write.csv(GoodPresenceModel, "ErodPresenceModel.csv", row.names=F)
+GoodCoverModel=as.data.frame(t(fixef(linmod4.lme)))
 names(GoodCoverModel)[1]="Int"
 names(GoodCoverModel)[which(names(GoodCoverModel)=="PlotDist:Area_Bot")]="Dist.Area"
 names(GoodCoverModel)[which(names(GoodCoverModel)=="Area_Bot:FireUB")]="Area.FireUB"
@@ -354,21 +334,33 @@ write.csv(GoodCoverModel, "ErodCoverModel.csv", row.names=F)
 
 ```
 
-```{r plot predict results}
+What are the predicted probabilities and covers for a plot of a given fire status or direction from shrub?
 
-NewShrubs=expand.grid(PlotDist=1:250, Rain=c("A","D"), Fire=c("B","UB"), TranDir=c("N","S"), Area_Bot=mean(Census$Area_Bot), Shrub=1)
+```{r plot predict results, echo=FALSE, warning=FALSE}
 
-NewShrubs$PredHurd=predict(hurdle12.lme,  newdata=NewShrubs, allow.new.levels=TRUE )
+NewShrubs=expand.grid( DistClass=c("UC","ON","OF"), Fire=c("B","UB"), TranDir=c("N","S"), Area_Bot=mean(Census$Area_Bot), Shrub=1)
 
-NewShrubs$PredCov=predict(linmod9.lme,  newdata=NewShrubs, allow.new.levels=TRUE )
+NewShrubs$PredHurd=predict(hurdle6.lme,  newdata=NewShrubs, allow.new.levels=TRUE )
 
-plot(NewShrubs$PlotDist, inv_logit(NewShrubs$PredHurd), col=firecols[NewShrubs$Fire])
-with(NewShrubs[NewShrubs$Fire=="UB",], points(PlotDist, inv_logit(PredHurd), col=firecols[1]))
-
+NewShrubs$PredCov=predict(linmod4.lme,  newdata=NewShrubs, allow.new.levels=TRUE )
 
 
-plot(Target/100~inv_logit(PresOnlyPred), data=Census.Test[Census.Test$MHcode>1& Census.Test$Target>0,], xlab="Predicted Percent Cover", ylab="Observed percent Cover" ) 
-abline(0,1, lty=2)
+boxplot(inv_logit(PredHurd)~ DistClass, data=NewShrubs, col="white", lty="blank", outline=F, ylab="predicted probability of plant presence")
+d_ply(NewShrubs, .(Fire,TranDir, Area_Bot), function(x) {
+    lines(x$DistClass, inv_logit(x$PredHurd), col=firecols[x$Fire], lty=dirlty[x$TranDir]) 
+    })
+legend(0.5,1.2, levels(NewShrubs$Fire), col=firecols, lty=1, bty="n", horiz=T, xpd=T)
+legend(2.5,1.2, levels(NewShrubs$TranDir), lty=dirlty, bty="n", horiz=T, xpd=T)
+
+
+boxplot(inv_logit(PredCov)~ DistClass, data=NewShrubs, col="white", lty="blank", outline=F, ylab="predicted cover")
+#Add error bars, but messy
+d_ply(NewShrubs, .(Fire,TranDir), function(x) {
+    lines(x$DistClass, inv_logit(x$PredCov), col=firecols[x$Fire], lty=dirlty[x$TranDir]) 
+    })
+
+legend(0.5,0.14, levels(NewShrubs$Fire), col=firecols, lty=1, bty="n", horiz=T, xpd=T)
+legend(2.5,0.14, levels(NewShrubs$TranDir), lty=dirlty, bty="n", horiz=T, xpd=T)
 
 
 
